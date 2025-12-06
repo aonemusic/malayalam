@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A One Music Player and downloader</title>
+    <title>A One Music Player - Neon Synthwave</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <link rel="icon" type="image/png" href="InShot_20251204_191559604.png"> 
@@ -13,15 +13,52 @@
         
         /* Custom Fonts and Reset */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
+        
+        /* --- NEON SYNTHWAVE COLOR PALETTE --- */
         :root {
-            --primary-color: #1DB954; /* Spotify Green */
-            --background-color: #121212; /* Dark background */
-            --card-color: #181818;
+            --primary-color: #FF33CC; /* Neon Pink/Fuchsia */
+            --background-color: #0D002B; /* Deep Indigo/Night Sky */
+            --card-color: #1A0040; /* Darker Purple Card */
             --text-color: #FFFFFF;
-            --secondary-text-color: #B3B3B3;
-            --hover-color: #282828;
+            --secondary-text-color: #80FFFF; /* Neon Cyan (Used for Logo Glow) */
+            --hover-color: #330080; /* Purple Hover */
+            --status-color: #FFFF66; /* Neon Yellow for status */
         }
+        /* ----------------------------------- */
+        
+        /* --- NEW ANIMATIONS --- */
+        
+        /* Keyframes for the pulsing glow on play button */
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 5px var(--primary-color); }
+            50% { box-shadow: 0 0 20px var(--primary-color), 0 0 30px var(--primary-color); }
+            100% { box-shadow: 0 0 5px var(--primary-color); }
+        }
+
+        /* Keyframes for 'Coming Soon' text glow */
+        @keyframes status-pulse {
+            0%, 100% { 
+                opacity: 1;
+                text-shadow: 0 0 5px var(--status-color), 0 0 10px rgba(255, 255, 102, 0.5); 
+            }
+            50% { 
+                opacity: 0.8;
+                text-shadow: 0 0 15px var(--status-color), 0 0 25px rgba(255, 255, 102, 0.8); 
+            }
+        }
+        
+        /* Keyframes for cover spin (exists, enhanced) */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* ---------------------- */
+
 
         * {
             margin: 0;
@@ -46,6 +83,7 @@
             background-color: var(--card-color);
             border-radius: 10px;
             margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
 
         .logo {
@@ -53,15 +91,52 @@
             align-items: center;
         }
 
-        .logo i {
-            color: var(--primary-color);
-            font-size: 2em;
-            margin-right: 10px;
+        /* NEW LOGO STYLES (Headphones + Bars) */
+        .logo-icon-container {
+            position: relative;
+            width: 40px; /* Adjust size */
+            height: 35px;
+            margin-right: 15px;
         }
+        
+        /* Headphones */
+        .logo-icon-container i {
+            position: absolute;
+            font-size: 2em;
+            color: var(--secondary-text-color); /* Neon Cyan */
+            /* Neon Glow */
+            text-shadow: 0 0 8px var(--secondary-text-color), 0 0 15px rgba(128, 255, 255, 0.6);
+        }
+        
+        /* Positioning specific icons */
+        .logo-icon-container .fa-headphones {
+            left: 0;
+            top: 0;
+        }
+        .logo-icon-container .fa-music { /* Used for the vertical bars */
+            left: 5px; /* Adjust bar position relative to headphones */
+            top: 5px;
+            font-size: 1.2em;
+            color: var(--primary-color); /* Neon Pink accent */
+            text-shadow: 0 0 5px var(--primary-color);
+        }
+        /* END NEW LOGO STYLES */
+
 
         .logo h1 {
             font-size: 1.8em;
             font-weight: 700;
+        }
+        
+        .logo .status-message {
+            color: var(--status-color); /* Neon Yellow */
+            font-size: 1em;
+            font-weight: 600; 
+            margin-left: 15px; 
+            align-self: flex-end; 
+            
+            /* ADDED ANIMATION: Neon pulsing effect */
+            animation: status-pulse 2s infinite ease-in-out;
         }
 
         /* --- Search Bar --- */
@@ -73,13 +148,17 @@
         #search-bar {
             width: 100%;
             padding: 10px 40px 10px 15px;
-            border: none;
+            border: 2px solid var(--hover-color);
             border-radius: 50px;
             background-color: var(--hover-color);
             color: var(--text-color);
             font-size: 1em;
             outline: none;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        #search-bar:focus {
+             border-color: var(--primary-color);
         }
 
         #search-bar::placeholder {
@@ -108,11 +187,11 @@
             background-color: var(--card-color);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
         }
 
         .song-list-container h2 {
-            color: var(--primary-color);
+            color: var(--primary-color); /* Neon Pink accent for title */
             margin-bottom: 15px;
             font-size: 1.5em;
             border-bottom: 2px solid var(--hover-color);
@@ -123,7 +202,7 @@
             list-style: none;
             max-height: 70vh;
             overflow-y: auto;
-            padding-right: 5px; /* Space for scrollbar */
+            padding-right: 5px; 
         }
 
         /* Scrollbar Style */
@@ -131,7 +210,7 @@
             width: 8px;
         }
         .song-list::-webkit-scrollbar-thumb {
-            background-color: var(--primary-color);
+            background-color: var(--primary-color); /* Neon Pink scroll thumb */
             border-radius: 10px;
         }
         .song-list::-webkit-scrollbar-track {
@@ -155,12 +234,14 @@
         }
 
         .song-item.active {
-            background-color: var(--primary-color);
-            color: var(--background-color);
+            background-color: var(--primary-color); /* Neon Pink active background */
+            color: var(--card-color);
             font-weight: 600;
+            /* Added glow for active item */
+            box-shadow: 0 0 10px rgba(255, 51, 204, 0.8);
         }
         .song-item.active .song-info span {
-            color: var(--background-color);
+            color: var(--card-color);
         }
 
 
@@ -188,10 +269,10 @@
 
         .play-icon {
             font-size: 1.2em;
-            color: var(--primary-color);
+            color: var(--primary-color); /* Neon Pink play icon */
         }
         .song-item.active .play-icon {
-            color: var(--background-color);
+            color: var(--card-color);
         }
 
         /* --- Current Player --- */
@@ -205,9 +286,9 @@
             padding: 30px;
             border-radius: 10px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
             position: sticky;
-            top: 20px; /* Stick it to the top */
+            top: 20px; 
         }
 
         .player-cover {
@@ -221,17 +302,11 @@
         }
 
         /* New CSS for Animation */
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
         .player-cover.animate {
-            border-radius: 50%; /* Make it circular for a record/CD look */
+            border-radius: 50%; 
+            border: 3px solid var(--secondary-text-color); 
+            /* Enhanced cover glow */
+            box-shadow: 0 0 15px var(--secondary-text-color), 0 0 25px rgba(128, 255, 255, 0.5); 
             animation: spin 10s linear infinite;
         }
         /* End New CSS for Animation */
@@ -240,6 +315,7 @@
             font-size: 1.4em;
             margin-bottom: 25px;
             min-height: 40px;
+            color: var(--secondary-text-color);
         }
 
         /* Player Controls */
@@ -256,11 +332,18 @@
 
         #play-pause-btn {
             font-size: 2.5em;
-            color: var(--primary-color);
+            color: var(--primary-color); /* Neon Pink main button */
+            transition: all 0.2s;
         }
 
+        /* Play button pulsing animation */
+        #play-pause-btn.playing {
+            animation: pulse-glow 1.5s infinite alternate;
+        }
+
+
         .controls button:hover {
-            color: var(--primary-color);
+            color: var(--secondary-text-color);
         }
         .controls button:active {
             transform: scale(0.95);
@@ -275,7 +358,7 @@
 
         .progress-bar {
             flex-grow: 1;
-            height: 6px;
+            height: 8px; /* Slightly thicker */
             -webkit-appearance: none;
             appearance: none;
             background: var(--hover-color);
@@ -287,11 +370,13 @@
         .progress-bar::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 12px;
-            height: 12px;
-            background: var(--primary-color);
+            width: 14px; /* Slightly larger thumb */
+            height: 14px;
+            background: var(--primary-color); /* Neon Pink progress thumb */
             border-radius: 50%;
             cursor: pointer;
+            /* Added glow to thumb */
+            box-shadow: 0 0 5px var(--primary-color);
         }
 
         .time {
@@ -304,8 +389,8 @@
         /* Download Button */
         .download-btn {
             display: inline-block;
-            background-color: var(--primary-color);
-            color: var(--background-color);
+            background-color: var(--primary-color); /* Neon Pink button */
+            color: var(--card-color); /* Dark text on button */
             text-decoration: none;
             padding: 10px 20px;
             border-radius: 50px;
@@ -315,7 +400,8 @@
         }
 
         .download-btn:hover {
-            background-color: #1ed760; /* Slightly lighter green */
+            background-color: #CC0099; /* Darker Pink on hover */
+            transform: scale(1.05);
         }
 
         .download-btn i {
@@ -330,7 +416,7 @@
 
             .current-player-container {
                 width: 100%;
-                order: -1; /* Move player above the list on mobile */
+                order: -1; 
             }
 
             .header {
@@ -345,7 +431,7 @@
                 width: 100%;
             }
             .player-cover.animate {
-                animation: spin 6s linear infinite; /* Faster spin on mobile */
+                animation: spin 6s linear infinite; 
             }
         }
     </style>
@@ -354,19 +440,20 @@
 
     <header class="header">
         <div class="logo">
-            <i class="fas fa-headphones-alt"></i>
+            <div class="logo-icon-container">
+                <i class="fas fa-headphones"></i> <i class="fas fa-music"></i> </div>
             <h1>A One Music</h1>
-            <h4 color:red;>Coming Soon</h4>
+            <h4 class="status-message">Coming Soon</h4>
         </div>
         <div class="search-container">
-            <input type="text" id="search-bar" placeholder="Search songs..." onkeyup="filterSongs()">
+            <input type="text" id="search-bar" placeholder="Search tracks..." onkeyup="filterSongs()">
             <i class="fas fa-search search-icon"></i>
         </div>
     </header>
 
     <main class="container">
         <section class="song-list-container">
-            <h2>Track List</h2>
+            <h2>Track List 💿</h2>
             
             <ul id="song-list" class="song-list">
                 </ul>
@@ -664,7 +751,7 @@
             }
         }
 
-        // Updates the 'active' class on song list items
+        // Updates the 'active' class on song list items and play/pause button
         function updateSongListUI(activeIndex) {
             document.querySelectorAll('.song-item').forEach((item) => {
                 const itemIndex = parseInt(item.getAttribute('data-index'));
@@ -682,6 +769,13 @@
                     }
                 }
             });
+            
+            // Toggle 'playing' class on the main play/pause button
+            if (isPlaying) {
+                playPauseBtn.classList.add('playing');
+            } else {
+                playPauseBtn.classList.remove('playing');
+            }
         }
 
         // Handles the song searching/filtering
@@ -735,7 +829,7 @@
             isPlaying = true;
             playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
             updateSongListUI(currentSongIndex);
-            toggleAnimation(true); // Start animation
+            toggleAnimation(true); // Start cover animation
             
             // Start/Update notification
             if (currentSongIndex !== -1) {
@@ -747,7 +841,7 @@
             isPlaying = false;
             playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
             updateSongListUI(currentSongIndex);
-            toggleAnimation(false); // Stop animation
+            toggleAnimation(false); // Stop cover animation
             
             // Update notification to show 'Paused' status
             if (currentSongIndex !== -1) {
