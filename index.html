@@ -23,16 +23,16 @@
             --secondary-text-color: #333333; /* Darker Gray for Secondary Text */
             --status-color: #28a745; /* Green for status/active */
             
-            /* NEW GLASSMORHISM VARIABLES */
+            /* NEW GLASSMORPHISM VARIABLES */
             --glass-color: rgba(255, 255, 255, 0.2); /* Very translucent white for background */
             --glass-border: rgba(255, 255, 255, 0.4); /* Subtle, lighter border */
             --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Soft, subtle shadow */
-            --blur-amount: 10px; /* The key blur amount */
+            --blur-amount: 10px; /* The key blur amount for components */
             --hover-glass-color: rgba(255, 255, 255, 0.3); /* Slightly less translucent on hover */
         }
         /* --------------------------------------------- */
         
-        /* --- NEW ANIMATIONS (Adjusted for Glass/Color) --- */
+        /* --- NEW ANIMATIONS --- */
         
         /* Keyframes for the pulsing effect (updated for glass) */
         @keyframes pulse-glow {
@@ -73,9 +73,22 @@
             font-family: 'Poppins', sans-serif;
         }
 
-        /* IMPORTANT: Glassmorphism needs a non-solid, contrasting background */
+        /* * IMPORTANT: MODIFICATION HERE 
+         * Added Background Image, Glass Frame, and Shadow to the body 
+         */
         body {
-            background: linear-gradient(135deg, var(--background-color), #007bff40); /* Gradient background */
+            /* 1. Set the background image */
+            background-image: url('aonemusic-b.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Keeps the background image still when scrolling */
+            
+            /* 2. Apply a subtle glass frame effect over the background image */
+            background-color: rgba(255, 255, 255, 0.1); /* Slight white overlay for glass feel */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            
+            /* 3. General body styles */
             color: var(--text-color);
             min-height: 100vh;
             padding: 20px;
@@ -415,6 +428,26 @@
             box-shadow: 0 0 5px rgba(0, 123, 255, 0.8);
         }
 
+        .progress-bar::-moz-range-thumb {
+            width: 14px; 
+            height: 14px;
+            background: var(--primary-color); 
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.8);
+        }
+        
+        .progress-bar::-ms-thumb {
+            width: 14px; 
+            height: 14px;
+            background: var(--primary-color); 
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.8);
+        }
+
         .time {
             font-size: 0.9em;
             color: var(--secondary-text-color);
@@ -527,9 +560,10 @@
     <script>
         /* JavaScript for Player Functionality and Notification Update */
 
-        /* SONG LIST (Updated with common asset paths) */
+        /* * SONG LIST (Updated with common asset paths) 
+         * IMPORTANT: Paths must be correct relative to where you save this HTML file
+         */
         const songs = [
-            // IMPORTANT: Paths must be correct relative to where you save this HTML file
             { title: "Ilakozhiye", coverFile: "Ilakozhiye.jpg", audioFile: "Ilakozhiye.mp3" },
             { title: "Nera", coverFile: "nera.jpg", audioFile: "Nera.mp3" },
             { title: "Shariya", coverFile: "shariya.jpg", audioFile: "Shariya.mp3" },
