@@ -9,12 +9,12 @@
     <link rel="icon" type="image/png" href="InShot_20251204_191559604.png"> 
     
     <style>
-        /* CSS for Glassmorphism Style */
+        /* CSS for Glassmorphism Style (Modified for subtle effect) */
         
         /* Custom Fonts and Reset */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
         
-        /* --- GLASSMORHISM COLOR PALETTE & VARIABLES (MODIFIED FOR LESS BLUR/TRANSPARENCY) --- */
+        /* --- GLASSMORHISM COLOR PALETTE & VARIABLES (SUBTLE EFFECT) --- */
         :root {
             /* General Colors */
             --primary-color: #007bff; 
@@ -23,12 +23,12 @@
             --secondary-text-color: #333333; 
             --status-color: #28a745; 
             
-            /* GLASSMORPHISM VARIABLES (MODIFIED VALUES) */
-            --glass-color: rgba(255, 255, 255, 0.1); /* സുതാര്യത കുറച്ചു */
-            --glass-border: rgba(255, 255, 255, 0.3); /* ബോർഡറിന്റെ തെളിച്ചം കുറച്ചു */
-            --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            --blur-amount: 6px; /* മങ്ങൽ 10px ൽ നിന്ന് 6px ലേക്ക് കുറച്ചു */
-            --hover-glass-color: rgba(255, 255, 255, 0.2); /* ഹോവർ സുതാര്യത കുറച്ചു */
+            /* GLASSMORPHISM VARIABLES (SUBTLE VALUES) */
+            --glass-color: rgba(255, 255, 255, 0.15); /* സുതാര്യത കുറച്ചു (0.15) */
+            --glass-border: rgba(255, 255, 255, 0.2); /* ബോർഡറിന്റെ തെളിച്ചം കുറച്ചു (0.2) */
+            --glass-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* ഷാഡോ കുറച്ചു */
+            --blur-amount: 3px; /* മങ്ങൽ 3px ലേക്ക് കുറച്ചു */
+            --hover-glass-color: rgba(255, 255, 255, 0.2); 
         }
         /* --------------------------------------------- */
         
@@ -72,8 +72,8 @@
 
         /* --- BACKGROUND FIX: Applied background image and blur using a pseudo-element --- */
         body {
-            /* 1. Set the background image directly on the body (Update 'aonemusic-b.jpg' path) */
-            background-image: url('aonemusic-b.jpg');
+            /* 1. Set the background image directly on the body (MUST UPDATE 'aonemusic-b.jpg' path) */
+            background-image: url('aonemusic-b.jpg'); /* <-- Change this to your background image path */
             background-size: cover;
             background-position: center;
             background-attachment: fixed; 
@@ -85,12 +85,6 @@
             position: relative;
             z-index: 1; 
         }
-
-        /* ---------------------------------------------------- */
-        /* REMOVED: The body::before full-screen blur for better performance. 
-           The blur is now handled only by the individual .glass-frame elements.
-        */
-        /* ---------------------------------------------------- */
         
         /* Global Glass Frame Styling Mixin */
         .glass-frame, 
@@ -114,7 +108,6 @@
             align-items: center;
             padding: 15px 30px;
             margin-bottom: 20px;
-            /* No need to repeat glass-frame styles here as they are in the combined selector above */
         }
 
         .logo {
@@ -162,7 +155,7 @@
             animation: status-pulse 2s infinite ease-in-out;
         }
 
-        /* --- Search Bar (MODIFIED) --- */
+        /* --- Search Bar --- */
         .search-container {
             position: relative;
             width: 300px;
@@ -178,8 +171,8 @@
             font-size: 1em;
             outline: none;
             transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
-            backdrop-filter: blur(3px); /* Reduced blur */
-            -webkit-backdrop-filter: blur(3px);
+            backdrop-filter: blur(0px); 
+            -webkit-backdrop-filter: blur(0px);
         }
 
         #search-bar:focus {
@@ -212,7 +205,6 @@
         .song-list-container {
             flex: 1;
             padding: 20px;
-            /* No need to repeat glass-frame styles here as they are in the combined selector above */
         }
 
         .song-list-container h2 {
@@ -311,8 +303,6 @@
             text-align: center;
             position: sticky;
             top: 20px; 
-            
-            /* No need to repeat glass-frame styles here as they are in the combined selector above */
         }
 
         .player-cover {
@@ -532,7 +522,7 @@
     <script>
         /* JavaScript for Player Functionality and Notification Update */
 
-        /* * SONG LIST (Update these paths to match your files) */
+        /* * SONG LIST (IMPORTANT: Update these paths to match your files) */
         const songs = [
             { title: "Ilakozhiye", coverFile: "Ilakozhiye.jpg", audioFile: "Ilakozhiye.mp3" },
             { title: "Nera", coverFile: "nera.jpg", audioFile: "Nera.mp3" },
@@ -614,18 +604,11 @@
                     body: `Time: ${currentTime} / ${duration}`, 
                     icon: song.coverFile, 
                     tag: 'music-player-playback', 
-                    actions: [
-                        {
-                            action: 'prev',
-                            title: 'Previous',
-                            icon: 'assets/icons/prev_icon.png' // **UPDATE PATH TO YOUR ICON**
-                        },
-                        {
-                            action: 'next',
-                            title: 'Next Song',
-                            icon: 'assets/icons/next_icon.png' // **UPDATE PATH TO YOUR ICON**
-                        }
-                    ],
+                    // Note: Actions won't work without service worker/dedicated icons
+                    // actions: [ 
+                    //     { action: 'prev', title: 'Previous', icon: 'assets/icons/prev_icon.png' }, 
+                    //     { action: 'next', title: 'Next Song', icon: 'assets/icons/next_icon.png' }
+                    // ],
                 };
                 
                 closeNotification(); 
@@ -784,8 +767,10 @@
             
             if (isPlaying) {
                 playPauseBtn.classList.add('playing');
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>'; // Ensure play/pause button matches state
             } else {
                 playPauseBtn.classList.remove('playing');
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
             }
         }
 
@@ -834,7 +819,6 @@
 
         audio.addEventListener('play', () => {
             isPlaying = true;
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
             updateSongListUI(currentSongIndex);
             toggleAnimation(true); 
             
@@ -845,7 +829,6 @@
 
         audio.addEventListener('pause', () => {
             isPlaying = false;
-            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
             updateSongListUI(currentSongIndex);
             toggleAnimation(false); 
             
