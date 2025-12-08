@@ -71,13 +71,13 @@
             font-family: 'Poppins', sans-serif;
         }
 
-        /* --- BACKGROUND FIX: Applied background image and blur using a pseudo-element --- */
+        /* --- BACKGROUND FIX: Applied background image directly on body --- */
         body {
-            /* 1. Set the background image directly on the body (MUST UPDATE 'aonemusic-b.jpg' path) */
-            background-image: url('aonemusic-b.jpg'); /* <-- Change this to your background image path */
+            /* 1. Set the background image directly on the body */
+            background-image: url('aonemusic-b.jpg'); /* <-- CHANGE THIS PATH */
             background-size: cover;
             background-position: center;
-            background-attachment: fixed; 
+            background-attachment: fixed; /* Ensures background image remains fixed while scrolling */
             
             /* 2. General body styles */
             color: var(--text-color);
@@ -88,15 +88,18 @@
         }
         
         /* Global Glass Frame Styling Mixin */
+        /* Applied to all main containers */
         .glass-frame, 
         .header, 
         .player-card, 
-        .song-list-container {
+        .song-list-container,
+        .header-btn {
             /* The Glassmorphism Effect applied to the container */
             background: var(--glass-color); 
             border: 1px solid var(--glass-border); 
             border-radius: 10px;
             box-shadow: var(--glass-shadow); 
+            /* Key for Glassmorphism: applies blur to content *behind* the element */
             backdrop-filter: blur(var(--blur-amount)); /* <--- STRONGER BLUR APPLIED HERE */
             -webkit-backdrop-filter: blur(var(--blur-amount)); 
             transition: all 0.3s ease; 
@@ -120,19 +123,13 @@
 
         /* UPDATED: Songs List Button Style (Glassmorphism Model) */
         .header-btn {
-            /* Use Glassmorphism Base Styles */
-            background: var(--glass-color); 
-            border: 1px solid var(--glass-border); 
-            box-shadow: var(--glass-shadow); 
-            backdrop-filter: blur(var(--blur-amount));
-            -webkit-backdrop-filter: blur(var(--blur-amount)); 
-            
-            color: var(--primary-color); /* Primary color text */
+            color: var(--primary-color); 
             padding: 10px 15px;
             border-radius: 50px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            border: 1px solid var(--glass-border); /* Re-applied border to button specifically */
+            background: var(--glass-color); /* Re-applied background to button specifically */
         }
         
         .header-btn:hover {
@@ -202,8 +199,9 @@
             font-size: 1em;
             outline: none;
             transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
-            backdrop-filter: blur(0px); 
-            -webkit-backdrop-filter: blur(0px);
+            /* Remove blur from input itself to ensure clear typing */
+            backdrop-filter: none; 
+            -webkit-backdrop-filter: none;
         }
 
         #search-bar:focus {
@@ -276,9 +274,15 @@
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
             position: relative;
+            /* Reset the glass effect on the list item to avoid double-blurring */
+            background: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border: none;
+            box-shadow: none;
         }
 
-        /* MODIFIED: Apply glass hover effect */
+        /* MODIFIED: Apply strong glass hover effect on the item */
         .song-item:hover {
             background-color: var(--hover-glass-color); 
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
@@ -286,11 +290,11 @@
 
         /* MODIFIED: Apply glass active effect */
         .song-item.active {
-            background-color: var(--active-glass-color); /* Use transparent blue glass */
-            color: var(--text-color); /* Keep text dark/readable */
+            background-color: var(--active-glass-color); 
+            color: var(--text-color); 
             font-weight: 600;
-            border: 1px solid var(--primary-color); /* Add a subtle border */
-            box-shadow: 0 0 15px var(--primary-color); 
+            border: 1px solid var(--primary-color); 
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.6); 
         }
         /* MODIFIED: Adjust colors for active state */
         .song-item.active .song-info strong,
@@ -493,6 +497,10 @@
             font-weight: 600;
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
             box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4); 
+            /* Remove glass effect from the solid button */
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border: none;
         }
 
         .download-btn:hover {
@@ -1000,4 +1008,3 @@
     </script>
 </body>
 </html>
-
