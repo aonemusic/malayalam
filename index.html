@@ -14,34 +14,32 @@
         /* Custom Fonts and Reset */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
         
-        /* --- GLASSMORHISM COLOR PALETTE & VARIABLES --- */
+        /* --- GLASSMORHISM COLOR PALETTE & VARIABLES (MODIFIED FOR LESS BLUR/TRANSPARENCY) --- */
         :root {
-            /* General Colors (Kept light for the background) */
-            --primary-color: #007bff; /* Bright Blue (Accent) */
-            --background-color: #c9e8ff; /* Light, slightly vibrant background for contrast with glass */
-            --text-color: #1a1a1a; /* Very Dark Gray for Main Text */
-            --secondary-text-color: #333333; /* Darker Gray for Secondary Text */
-            --status-color: #28a745; /* Green for status/active */
+            /* General Colors */
+            --primary-color: #007bff; 
+            --background-color: #c9e8ff;
+            --text-color: #1a1a1a; 
+            --secondary-text-color: #333333; 
+            --status-color: #28a745; 
             
-            /* NEW GLASSMORPHISM VARIABLES */
-            --glass-color: rgba(255, 255, 255, 0.2); /* Very translucent white for background */
-            --glass-border: rgba(255, 255, 255, 0.4); /* Subtle, lighter border */
-            --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Soft, subtle shadow */
-            --blur-amount: 10px; /* The key blur amount for components */
-            --hover-glass-color: rgba(255, 255, 255, 0.3); /* Slightly less translucent on hover */
+            /* GLASSMORPHISM VARIABLES (MODIFIED VALUES) */
+            --glass-color: rgba(255, 255, 255, 0.1); /* സുതാര്യത കുറച്ചു */
+            --glass-border: rgba(255, 255, 255, 0.3); /* ബോർഡറിന്റെ തെളിച്ചം കുറച്ചു */
+            --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            --blur-amount: 6px; /* മങ്ങൽ 10px ൽ നിന്ന് 6px ലേക്ക് കുറച്ചു */
+            --hover-glass-color: rgba(255, 255, 255, 0.2); /* ഹോവർ സുതാര്യത കുറച്ചു */
         }
         /* --------------------------------------------- */
         
-        /* --- NEW ANIMATIONS --- */
+        /* --- ANIMATIONS --- */
         
-        /* Keyframes for the pulsing effect (updated for glass) */
         @keyframes pulse-glow {
             0% { box-shadow: var(--glass-shadow); transform: scale(1); }
             50% { box-shadow: 0 0 20px rgba(0, 123, 255, 0.5); transform: scale(1.03); }
             100% { box-shadow: var(--glass-shadow); transform: scale(1); }
         }
 
-        /* Keyframes for 'Coming Soon' text (kept) */
         @keyframes status-pulse {
             0%, 100% { 
                 opacity: 1;
@@ -53,7 +51,6 @@
             }
         }
         
-        /* Keyframes for cover spin (kept) */
         @keyframes spin {
             from {
                 transform: rotate(0deg);
@@ -75,7 +72,7 @@
 
         /* --- BACKGROUND FIX: Applied background image and blur using a pseudo-element --- */
         body {
-            /* 1. Set the background image directly on the body */
+            /* 1. Set the background image directly on the body (Update 'aonemusic-b.jpg' path) */
             background-image: url('aonemusic-b.jpg');
             background-size: cover;
             background-position: center;
@@ -85,12 +82,11 @@
             color: var(--text-color);
             min-height: 100vh;
             padding: 20px;
-            /* Ensure content is positioned correctly */
             position: relative;
             z-index: 1; 
         }
 
-        /* 3. Pseudo-element for the full-screen blur/glass layer */
+        /* 3. Pseudo-element for the full-screen blur/glass layer (MODIFIED) */
         body::before {
             content: '';
             position: fixed; 
@@ -98,25 +94,24 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Placed behind the actual content */
+            z-index: -1; 
             
             /* The key Glass Layer */
-            background-color: rgba(255, 255, 255, 0.1); /* Subtle white overlay */
-            backdrop-filter: blur(5px); /* Blurs the background image */
-            -webkit-backdrop-filter: blur(5px);
+            background-color: rgba(255, 255, 255, 0.05); /* Overlay സുതാര്യത കുറച്ചു */
+            backdrop-filter: blur(3px); /* Blurs the background image (5px ൽ നിന്ന് 3px ലേക്ക് കുറച്ചു) */
+            -webkit-backdrop-filter: blur(3px);
         }
         /* --- END BACKGROUND FIX --- */
         
-        /* Global Glass Frame Styling Mixin (Helper for quick application) */
+        /* Global Glass Frame Styling Mixin */
         .glass-frame {
             background: var(--glass-color); 
-            border: 1px solid var(--glass-border); /* Subtle border */
+            border: 1px solid var(--glass-border); 
             border-radius: 10px;
             box-shadow: var(--glass-shadow); 
-            /* The key to Glassmorphism: Backdrop Blur */
             backdrop-filter: blur(var(--blur-amount));
-            -webkit-backdrop-filter: blur(var(--blur-amount)); /* Safari support */
-            transition: all 0.3s ease; /* For smooth hover effects */
+            -webkit-backdrop-filter: blur(var(--blur-amount)); 
+            transition: all 0.3s ease; 
         }
 
         /* --- Header & Logo --- */
@@ -140,7 +135,6 @@
             align-items: center;
         }
 
-        /* NEW LOGO STYLES (Headphones + Bars) */
         .logo-icon-container {
             position: relative;
             width: 40px; 
@@ -148,7 +142,6 @@
             margin-right: 15px;
         }
         
-        /* Headphones */
         .logo-icon-container i {
             position: absolute;
             font-size: 2em;
@@ -156,7 +149,6 @@
             text-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
         }
         
-        /* Positioning specific icons */
         .logo-icon-container .fa-headphones {
             left: 0;
             top: 0;
@@ -168,8 +160,6 @@
             color: var(--status-color); 
             text-shadow: none; 
         }
-        /* END NEW LOGO STYLES */
-
 
         .logo h1 {
             font-size: 1.8em;
@@ -185,7 +175,7 @@
             animation: status-pulse 2s infinite ease-in-out;
         }
 
-        /* --- Search Bar (Adjusted for Glass style) --- */
+        /* --- Search Bar (MODIFIED) --- */
         .search-container {
             position: relative;
             width: 300px;
@@ -194,22 +184,21 @@
         #search-bar {
             width: 100%;
             padding: 10px 40px 10px 15px;
-            /* Glass Style Input */
             border: 1px solid var(--glass-border); 
             border-radius: 50px;
-            background-color: var(--hover-glass-color); /* Slightly opaque background */
+            background-color: var(--hover-glass-color); 
             color: var(--text-color);
             font-size: 1em;
             outline: none;
             transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
-            backdrop-filter: blur(5px); /* Less blur for input */
-            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(3px); /* Reduced blur */
+            -webkit-backdrop-filter: blur(3px);
         }
 
         #search-bar:focus {
              border-color: var(--primary-color);
              box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); 
-             background-color: var(--glass-color); /* More translucent on focus */
+             background-color: var(--glass-color); 
         }
 
         #search-bar::placeholder {
@@ -232,11 +221,10 @@
             margin: 0 auto;
         }
 
-        /* --- Song List (Applied Glass Frame) --- */
+        /* --- Song List --- */
         .song-list-container {
             flex: 1;
             padding: 20px;
-            /* Apply Glass Frame Style */
             background: var(--glass-color); 
             border: 1px solid var(--glass-border); 
             border-radius: 10px;
@@ -249,7 +237,7 @@
             color: var(--primary-color); 
             margin-bottom: 15px;
             font-size: 1.5em;
-            border-bottom: 2px solid var(--glass-border); /* Subtle border for separator */
+            border-bottom: 2px solid var(--glass-border); 
             padding-bottom: 10px;
         }
 
@@ -269,7 +257,7 @@
             border-radius: 10px;
         }
         .song-list::-webkit-scrollbar-track {
-            background: var(--glass-color); /* Translucent track */
+            background: var(--glass-color); 
             border-radius: 10px;
         }
 
@@ -285,13 +273,11 @@
         }
 
         .song-item:hover {
-            /* Subtle hover effect on glass */
             background-color: var(--hover-glass-color); 
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
         }
 
         .song-item.active {
-            /* Active item stands out with a solid background */
             background-color: var(--primary-color); 
             color: white; 
             font-weight: 600;
@@ -308,7 +294,6 @@
             object-fit: cover;
             border-radius: 4px;
             margin-right: 15px;
-            /* Subtle shadow for depth */
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
         }
 
@@ -333,7 +318,7 @@
             color: white; 
         }
 
-        /* --- Current Player (Applied Glass Frame) --- */
+        /* --- Current Player --- */
         .current-player-container {
             width: 350px;
             flex-shrink: 0;
@@ -359,20 +344,19 @@
             max-width: 250px;
             height: auto;
             border-radius: 10px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Darker shadow for depth */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); 
             margin-bottom: 20px;
             object-fit: cover;
             transition: all 0.3s;
         }
 
-        /* New CSS for Animation */
+        /* Cover Animation */
         .player-cover.animate {
             border-radius: 50%; 
             border: 3px solid var(--primary-color); 
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.6), 0 0 20px rgba(0, 123, 255, 0.3); /* Enhanced glow */
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.6), 0 0 20px rgba(0, 123, 255, 0.3); 
             animation: spin 10s linear infinite;
         }
-        /* End New CSS for Animation */
 
         .player-title {
             font-size: 1.4em;
@@ -399,7 +383,6 @@
             transition: all 0.2s;
         }
 
-        /* Play button pulsing animation (now using pulse-glow defined above) */
         #play-pause-btn.playing {
             animation: pulse-glow 1.5s infinite alternate;
         }
@@ -424,7 +407,7 @@
             height: 8px; 
             -webkit-appearance: none;
             appearance: none;
-            background: var(--hover-glass-color); /* Translucent track */
+            background: var(--hover-glass-color); 
             border-radius: 5px;
             margin: 0 10px;
             cursor: pointer;
@@ -479,7 +462,7 @@
             margin-top: 25px;
             font-weight: 600;
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4); /* Primary color shadow */
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4); 
         }
 
         .download-btn:hover {
@@ -573,9 +556,7 @@
     <script>
         /* JavaScript for Player Functionality and Notification Update */
 
-        /* * SONG LIST (Updated with common asset paths) 
-         * IMPORTANT: Paths must be correct relative to where you save this HTML file
-         */
+        /* * SONG LIST (Update these paths to match your files) */
         const songs = [
             { title: "Ilakozhiye", coverFile: "Ilakozhiye.jpg", audioFile: "Ilakozhiye.mp3" },
             { title: "Nera", coverFile: "nera.jpg", audioFile: "Nera.mp3" },
@@ -607,7 +588,7 @@
         /* State Variables */
         let currentSongIndex = -1; // -1 means no song is currently loaded
         let isPlaying = false;
-        let notificationInstance = null; // To store the current notification object
+        let notificationInstance = null; 
         let notificationIntervalId = null; 
 
         /* --- Utility Functions --- */
@@ -619,9 +600,8 @@
             return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
         }
 
-        /* --- Notification Functions (Updated) --- */
+        /* --- Notification Functions (Requires icon files at specified paths if used) --- */
 
-        // Request permission to send notifications
         function requestNotificationPermission() {
             if (!("Notification" in window)) {
                 console.log("This browser does not support desktop notification");
@@ -632,7 +612,6 @@
             }
         }
 
-        // Close and clear the current notification
         function closeNotification() {
             if (notificationInstance) {
                 notificationInstance.close();
@@ -644,9 +623,7 @@
             }
         }
 
-        // Create/Update the persistent notification
         function updatePlaybackNotification(song) {
-            // Only proceed if permission is granted
             if (Notification.permission !== "granted") {
                 return; 
             }
@@ -655,16 +632,12 @@
                 const currentTime = formatTime(audio.currentTime);
                 const duration = formatTime(audio.duration || 0);
                 
-                // This is the main title of the notification (Song Name + Status)
                 const titleText = isPlaying ? `▶ Playing: ${song.title}` : `⏸ Paused: ${song.title}`;
 
                 const options = {
-                    // Song time in the main body
                     body: `Time: ${currentTime} / ${duration}`, 
-                    // Use the song cover as the icon
                     icon: song.coverFile, 
                     tag: 'music-player-playback', 
-                    // Add Action Buttons (Previous and Next)
                     actions: [
                         {
                             action: 'prev',
@@ -679,50 +652,42 @@
                     ],
                 };
                 
-                // Close the old notification before creating a new one
                 closeNotification(); 
 
-                // Ensure the icon file exists or the notification might fail
                 notificationInstance = new Notification(titleText, options);
 
-                // --- Handling Button Clicks via 'action' ---
                 notificationInstance.onactionclick = function(event) {
                     if (event.action === 'next') {
                         playNext();
                     } else if (event.action === 'prev') {
                         playPrev();
                     }
-                    // Optional: Focus the window when an action is taken
                     window.focus(); 
                 };
 
-                // Add a click listener for the main body
                 notificationInstance.onclick = function(event) {
                     event.preventDefault(); 
                     window.focus(); 
                 };
             };
             
-            // Initial update
             updateNotification();
 
-            // Set up interval to update the time display in the notification
             if (isPlaying && !notificationIntervalId) {
-                notificationIntervalId = setInterval(updateNotification, 5000); // Update every 5 seconds
+                notificationIntervalId = setInterval(updateNotification, 5000); 
             }
             if (!isPlaying && notificationIntervalId) {
-                clearInterval(notificationIntervalId); // Stop interval if paused
+                clearInterval(notificationIntervalId); 
                 notificationIntervalId = null;
-                updateNotification(); // One final update to show 'Paused' status
+                updateNotification(); 
             }
         }
 
 
         /* --- Main Player Functions --- */
 
-        // Loads the specified song into the player
         function loadSong(index) {
-            if (index < 0 || index >= songs.length) return; // Safety check
+            if (index < 0 || index >= songs.length) return; 
 
             currentSongIndex = index;
             const song = songs[currentSongIndex];
@@ -736,17 +701,13 @@
             const fileExtension = song.audioFile.split('.').pop(); 
             downloadLink.setAttribute('download', `${song.title}.${fileExtension}`); 
 
-            // Update active state in song list UI
             updateSongListUI(currentSongIndex);
             
-            // Close old notification when loading a new song
             closeNotification(); 
         }
 
-        // Toggles the play/pause state
         function togglePlay() {
             if (currentSongIndex === -1) {
-                // If no song is loaded, load the first one and play
                 loadSong(0);
                 playSong();
                 return;
@@ -759,33 +720,26 @@
             }
         }
 
-        // Forces the song to play
         function playSong() {
-            // Need to wrap in a promise catch for autoplay limitations
             const playPromise = audio.play();
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
                     console.error("Autoplay prevented:", error);
-                    // User might need to click the main play button first.
                 });
             }
         }
 
-        // Forces the song to pause
         function pauseSong() {
             audio.pause();
         }
 
-        // Play the next song in the list
         function playNext() {
             const nextIndex = (currentSongIndex + 1) % songs.length;
             loadSong(nextIndex);
             playSong();
         }
 
-        // Play the previous song in the list
         function playPrev() {
-            // Loop back to the end if at the beginning
             let prevIndex = currentSongIndex - 1;
             if (prevIndex < 0) {
                 prevIndex = songs.length - 1;
@@ -796,12 +750,10 @@
 
         /* --- UI Functions --- */
 
-        // Populates the song list on the webpage
         function renderSongList(songArray) {
-            songListEl.innerHTML = ''; // Clear existing list
+            songListEl.innerHTML = ''; 
             
             songArray.forEach((song) => {
-                // Find the original index for the click handler, even if the list is filtered
                 const originalIndex = songs.findIndex(s => s.title === song.title);
 
                 const listItem = document.createElement('li');
@@ -831,13 +783,11 @@
                 songListEl.appendChild(listItem);
             });
 
-            // Re-apply active state after rendering
             if (currentSongIndex !== -1) {
                 updateSongListUI(currentSongIndex);
             }
         }
 
-        // Updates the 'active' class on song list items and play/pause button
         function updateSongListUI(activeIndex) {
             document.querySelectorAll('.song-item').forEach((item) => {
                 const itemIndex = parseInt(item.getAttribute('data-index'));
@@ -845,7 +795,7 @@
 
                 item.classList.remove('active');
                 if (playIcon) {
-                    playIcon.className = 'fas fa-play play-icon'; // Default to Play icon
+                    playIcon.className = 'fas fa-play play-icon'; 
                 }
 
                 if (itemIndex === activeIndex) {
@@ -856,7 +806,6 @@
                 }
             });
             
-            // Toggle 'playing' class on the main play/pause button
             if (isPlaying) {
                 playPauseBtn.classList.add('playing');
             } else {
@@ -864,7 +813,6 @@
             }
         }
 
-        // Handles the song searching/filtering
         function filterSongs() {
             const searchTerm = document.getElementById('search-bar').value.toLowerCase();
             
@@ -875,7 +823,6 @@
             renderSongList(filteredSongs);
         }
 
-        /* --- Animation Toggle Function --- */
         function toggleAnimation(is_playing) {
             if (is_playing) {
                 playerCoverEl.classList.add('animate');
@@ -887,12 +834,10 @@
 
         /* --- Event Listeners --- */
 
-        // Player Controls
         playPauseBtn.addEventListener('click', togglePlay);
         nextBtn.addEventListener('click', playNext);
         prevBtn.addEventListener('click', playPrev);
 
-        // Audio Events
         audio.addEventListener('loadedmetadata', () => {
             progressBar.max = audio.duration;
             durationEl.textContent = formatTime(audio.duration);
@@ -908,16 +853,15 @@
 
         audio.addEventListener('ended', () => {
             closeNotification(); 
-            playNext(); // Autoplay next song
+            playNext(); 
         }); 
 
         audio.addEventListener('play', () => {
             isPlaying = true;
             playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
             updateSongListUI(currentSongIndex);
-            toggleAnimation(true); // Start cover animation
+            toggleAnimation(true); 
             
-            // Start/Update notification
             if (currentSongIndex !== -1) {
                 updatePlaybackNotification(songs[currentSongIndex]);
             }
@@ -927,15 +871,13 @@
             isPlaying = false;
             playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
             updateSongListUI(currentSongIndex);
-            toggleAnimation(false); // Stop cover animation
+            toggleAnimation(false); 
             
-            // Update notification to show 'Paused' status
             if (currentSongIndex !== -1) {
                 updatePlaybackNotification(songs[currentSongIndex]);
             }
         });
 
-        // Progress Bar interaction
         progressBar.addEventListener('input', () => {
             currentTimeEl.textContent = formatTime(progressBar.value);
         });
@@ -946,14 +888,10 @@
 
         /* --- Initialization --- */
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Render the full song list when the page loads
             renderSongList(songs);
-            
-            // 2. Request Notification Permission
             requestNotificationPermission();
         });
 
-        // Ensure notification is closed if the browser tab is closed/page is left
         window.addEventListener('beforeunload', closeNotification);
     </script>
 </body>
