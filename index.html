@@ -7,36 +7,44 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
-        /* CSS for Style (Modified to remove Glassmorphism blur) */
+        /* CSS for Style (Modified to Liquid Glass / Soft Glass Effect) */
         
         /* Custom Fonts and Reset */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
         
-        /* --- COLOR PALETTE & VARIABLES (MODIFIED) --- */
+        /* --- COLOR PALETTE & VARIABLES (MODIFIED FOR LIQUID/SOFT GLASS) --- */
         :root {
             /* General Colors */
             --primary-color: #007bff; 
-            --background-color: #c9e8ff;
+            --background-color: #ebf5ff; /* Lighter background for Soft UI base */
             --text-color: #1a1a1a; 
-            --secondary-text-color: #333333; 
+            --secondary-text-color: #555555; /* Slightly softer secondary text */
             --status-color: #28a745; 
             
-            /* GLASSMORPHISM VARIABLES (NOW JUST TRANSPARENT BACKGROUNDS) */
-            --glass-color: rgba(255, 255, 255, 0.20); /* Semi-transparent white */
-            --glass-border: rgba(255, 255, 255, 0.4); /* Border slightly brighter */
-            --glass-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Stronger shadow */
-            --blur-amount: 0px; /* SET TO ZERO / NO LONGER USED */
-            --hover-glass-color: rgba(255, 255, 255, 0.45); /* Hover color */
-            --active-glass-color: rgba(0, 123, 255, 0.35); /* Transparent blue for active state */
+            /* LIQUID/SOFT GLASS VARIABLES */
+            --liquid-bg: rgba(255, 255, 255, 0.6); /* Soft, light background */
+            --liquid-border: none; /* No hard border */
+            /* DUAL SOFT SHADOWS (Neumorphism style for a 'liquid' elevation) */
+            --liquid-shadow: 
+                6px 6px 12px rgba(174, 174, 192, 0.4), /* Dark shadow for depth */
+                -6px -6px 12px rgba(255, 255, 255, 0.9); /* Light shadow for highlight */
+            --blur-amount: 0px; 
+            --hover-liquid-bg: rgba(255, 255, 255, 0.9); 
+            --active-liquid-color: rgba(0, 123, 255, 0.15); /* Very light blue for active */
         }
         /* --------------------------------------------- */
         
-        /* --- ANIMATIONS --- */
+        /* --- ANIMATIONS (Modified for softer glow) --- */
         
         @keyframes pulse-glow {
-            0% { box-shadow: var(--glass-shadow); transform: scale(1); }
-            50% { box-shadow: 0 0 20px rgba(0, 123, 255, 0.5); transform: scale(1.03); }
-            100% { box-shadow: var(--glass-shadow); transform: scale(1); }
+            0% { box-shadow: var(--liquid-shadow); transform: scale(1); }
+            50% { 
+                /* Softer, more widespread glow */
+                box-shadow: 0 0 30px rgba(0, 123, 255, 0.6), 
+                            var(--liquid-shadow); 
+                transform: scale(1.02); 
+            }
+            100% { box-shadow: var(--liquid-shadow); transform: scale(1); }
         }
 
         @keyframes status-pulse {
@@ -45,7 +53,7 @@
                 color: var(--status-color); 
             }
             50% { 
-                opacity: 0.7;
+                opacity: 0.8;
                 color: var(--primary-color); 
             }
         }
@@ -75,7 +83,7 @@
             background-image: url('aonemusic-b.jpg'); /* <-- CHANGE THIS PATH */
             background-size: cover;
             background-position: center;
-            background-attachment: fixed; /* Ensures background image remains fixed while scrolling */
+            background-attachment: fixed; 
             
             /* 2. General body styles */
             color: var(--text-color);
@@ -83,24 +91,24 @@
             padding: 20px;
             position: relative;
             z-index: 1; 
+            /* Set fallback color */
+            background-color: var(--background-color); 
         }
         
-        /* Global Glass Frame Styling Mixin */
-        /* Applied to all main containers */
+        /* Global Liquid Glass Frame Styling Mixin */
         .glass-frame, 
         .header, 
         .player-card, 
         .song-list-container,
         .header-btn {
-            /* The Glassmorphism Effect applied to the container */
-            background: var(--glass-color); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 10px;
-            box-shadow: var(--glass-shadow); 
-            /* REMOVED: Key for Glassmorphism: backdrop-filter: blur(...) */
+            /* The Liquid/Soft Glass Effect applied to the container */
+            background: var(--liquid-bg); 
+            border: var(--liquid-border); /* Removed border */
+            border-radius: 15px; /* Slightly larger radius for softer look */
+            box-shadow: var(--liquid-shadow); /* Applied Dual Soft Shadow */
             backdrop-filter: none; 
             -webkit-backdrop-filter: none; 
-            transition: all 0.3s ease; 
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); /* Smoother transition */
         }
 
         /* --- Header & Logo --- */
@@ -109,31 +117,42 @@
             justify-content: space-between;
             align-items: center;
             padding: 15px 30px;
-            margin-bottom: 20px;
+            margin-bottom: 25px; /* Increased margin */
+            border-radius: 15px; /* Match container radius */
         }
         
         /* New: Header Actions Container */
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
         }
 
-        /* UPDATED: Songs List Button Style (Transparent Model) */
+        /* UPDATED: Songs List Button Style (Soft-Pressed Model) */
         .header-btn {
             color: var(--primary-color); 
-            padding: 10px 15px;
-            border-radius: 50px;
+            padding: 10px 18px;
+            border-radius: 25px; /* Softer edges */
             font-weight: 600;
             cursor: pointer;
-            border: 1px solid var(--glass-border); /* Re-applied border to button specifically */
-            background: var(--glass-color); /* Re-applied background to button specifically */
+            border: none;
+            background: var(--liquid-bg);
+            box-shadow: 3px 3px 7px rgba(174, 174, 192, 0.3), 
+                        -3px -3px 7px rgba(255, 255, 255, 0.8); /* Smaller soft shadow */
         }
         
         .header-btn:hover {
-            background-color: var(--hover-glass-color); /* Lighter hover effect */
-            transform: scale(1.05);
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.4); /* Subtle glow on hover */
+            background-color: var(--hover-liquid-bg); /* Lighter hover effect */
+            transform: scale(1.03);
+            box-shadow: 5px 5px 10px rgba(174, 174, 192, 0.4), 
+                        -5px -5px 10px rgba(255, 255, 255, 0.9); /* Soft hover elevation */
+        }
+        
+        .header-btn:active {
+            /* 'Pressed-in' effect for liquid feel */
+            box-shadow: inset 2px 2px 5px rgba(174, 174, 192, 0.4), 
+                        inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+            transform: scale(0.98);
         }
 
         .logo {
@@ -158,10 +177,8 @@
         .logo-icon-container .fa-headphones {
             left: 0;
             top: 0;
-            /* Added a tiny offset to the headphones for better centering */
             transform: translateY(-5px); 
         }
-        /* REMOVED: CSS for .fa-music */
 
         .logo h1 {
             font-size: 1.8em;
@@ -185,23 +202,26 @@
 
         #search-bar {
             width: 100%;
-            padding: 10px 40px 10px 15px;
-            border: 1px solid var(--glass-border); 
-            border-radius: 50px;
-            background-color: var(--hover-glass-color); 
+            padding: 12px 40px 12px 20px;
+            border: none; 
+            border-radius: 30px;
+            background-color: var(--liquid-bg); /* Soft background */
             color: var(--text-color);
             font-size: 1em;
             outline: none;
-            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
-            /* Already removed here, but ensuring it's not accidentally re-applied */
+            transition: all 0.3s;
+            /* Inset shadow for "Liquid Pressed" look */
+            box-shadow: inset 3px 3px 7px rgba(174, 174, 192, 0.4), 
+                        inset -3px -3px 7px rgba(255, 255, 255, 0.8);
             backdrop-filter: none; 
             -webkit-backdrop-filter: none;
         }
 
         #search-bar:focus {
-             border-color: var(--primary-color);
-             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); 
-             background-color: var(--glass-color); 
+             box-shadow: inset 1px 1px 2px rgba(174, 174, 192, 0.4), 
+                         inset -1px -1px 2px rgba(255, 255, 255, 0.8),
+                         0 0 0 3px rgba(0, 123, 255, 0.15); /* Subtle blue ring focus */
+             background-color: var(--hover-liquid-bg); 
         }
 
         #search-bar::placeholder {
@@ -219,7 +239,7 @@
         /* --- Main Layout --- */
         .container {
             display: flex;
-            gap: 20px;
+            gap: 25px; /* Increased gap */
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -227,14 +247,15 @@
         /* --- Song List --- */
         .song-list-container {
             flex: 1;
-            padding: 20px;
+            padding: 25px;
+            border-radius: 15px; /* Match container radius */
         }
 
         .song-list-container h2 {
             color: var(--primary-color); 
-            margin-bottom: 15px;
-            font-size: 1.5em;
-            border-bottom: 2px solid var(--glass-border); 
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            border-bottom: 2px solid rgba(0, 123, 255, 0.2); /* Softer separator */
             padding-bottom: 10px;
         }
 
@@ -254,7 +275,7 @@
             border-radius: 10px;
         }
         .song-list::-webkit-scrollbar-track {
-            background: var(--glass-color); 
+            background: var(--liquid-bg); 
             border-radius: 10px;
         }
 
@@ -264,11 +285,11 @@
             align-items: center;
             padding: 10px;
             margin-bottom: 8px;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
             position: relative;
-            /* Reset the glass effect on the list item to avoid double-blurring */
+            /* Reset to base styling for items */
             background: none;
             backdrop-filter: none;
             -webkit-backdrop-filter: none;
@@ -276,19 +297,22 @@
             box-shadow: none;
         }
 
-        /* MODIFIED: Apply strong glass hover effect on the item */
+        /* MODIFIED: Apply soft hover effect on the item */
         .song-item:hover {
-            background-color: var(--hover-glass-color); 
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+            background-color: var(--hover-liquid-bg); 
+            /* Soft inner shadow on hover for a 'rippling' effect */
+            box-shadow: inset 1px 1px 3px rgba(174, 174, 192, 0.2);
+            transform: translateY(-2px); 
         }
 
-        /* MODIFIED: Apply glass active effect */
+        /* MODIFIED: Apply soft active effect */
         .song-item.active {
-            background-color: var(--active-glass-color); 
+            background-color: var(--active-liquid-color); 
             color: var(--text-color); 
             font-weight: 600;
             border: 1px solid var(--primary-color); 
-            box-shadow: 0 0 15px rgba(0, 123, 255, 0.6); 
+            /* Subtle blue glow for playing state */
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.3); 
         }
         /* MODIFIED: Adjust colors for active state */
         .song-item.active .song-info strong,
@@ -371,10 +395,11 @@
         }
 
         .player-card {
-            padding: 30px;
+            padding: 35px; /* Increased padding */
             text-align: center;
             position: sticky;
-            top: 20px; 
+            top: 25px; /* Increased offset */
+            border-radius: 15px; /* Match container radius */
         }
 
         .player-cover {
@@ -382,8 +407,8 @@
             max-width: 250px;
             height: auto;
             border-radius: 10px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); 
-            margin-bottom: 20px;
+            box-shadow: var(--liquid-shadow); /* Soft shadow on the cover */
+            margin-bottom: 25px;
             object-fit: cover;
             transition: all 0.3s;
         }
@@ -391,8 +416,10 @@
         /* Cover Animation (Spinning when playing) */
         .player-cover.animate {
             border-radius: 50%; 
-            border: 3px solid var(--primary-color); 
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.6), 0 0 20px rgba(0, 123, 255, 0.3); 
+            border: 4px solid var(--primary-color); /* Thicker border */
+            /* Enhanced glowing shadow for the 'liquid' highlight */
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.8), 
+                        0 0 30px rgba(0, 123, 255, 0.4); 
             animation: spin 10s linear infinite;
         }
 
@@ -405,20 +432,28 @@
 
         /* Player Controls */
         .controls button {
-            background: none;
+            background: var(--liquid-bg);
             border: none;
             color: var(--secondary-text-color);
-            font-size: 1.8em;
+            font-size: 2em; 
             margin: 0 10px;
             cursor: pointer;
-            transition: color 0.2s, transform 0.1s;
-            padding: 5px;
+            transition: all 0.2s, transform 0.1s;
+            padding: 0; 
+            border-radius: 50%; 
+            width: 50px; 
+            height: 50px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 3px 3px 6px rgba(174, 174, 192, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.7); /* Soft shadow */
         }
 
         #play-pause-btn {
-            font-size: 2.5em;
+            font-size: 3em; /* Larger play button */
             color: var(--primary-color); 
-            transition: all 0.2s;
+            width: 70px; 
+            height: 70px;
         }
 
         #play-pause-btn.playing {
@@ -428,8 +463,13 @@
 
         .controls button:hover {
             color: var(--primary-color);
+            box-shadow: 5px 5px 10px rgba(174, 174, 192, 0.4), 
+                        -5px -5px 10px rgba(255, 255, 255, 0.9); /* Soft hover elevation */
         }
         .controls button:active {
+            /* 'Pressed-in' effect for liquid feel */
+            box-shadow: inset 2px 2px 4px rgba(174, 174, 192, 0.4), 
+                        inset -2px -2px 4px rgba(255, 255, 255, 0.8);
             transform: scale(0.95);
         }
 
@@ -445,10 +485,11 @@
             height: 8px; 
             -webkit-appearance: none;
             appearance: none;
-            background: var(--hover-glass-color); 
+            background: var(--hover-liquid-bg); 
             border-radius: 5px;
             margin: 0 10px;
             cursor: pointer;
+            box-shadow: inset 1px 1px 3px rgba(174, 174, 192, 0.3); /* Slight inner shadow */
         }
 
         .progress-bar::-webkit-slider-thumb {
@@ -485,13 +526,13 @@
             background-color: var(--status-color); 
             color: white; 
             text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 50px;
-            margin-top: 25px;
+            padding: 12px 25px; /* Increased padding */
+            border-radius: 30px;
+            margin-top: 30px;
             font-weight: 600;
-            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4); 
-            /* Remove glass effect from the solid button */
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+            /* Enhanced soft shadow for elevation */
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.5); 
             backdrop-filter: none;
             -webkit-backdrop-filter: none;
             border: none;
@@ -499,8 +540,8 @@
 
         .download-btn:hover {
             background-color: #1e7e34; 
-            transform: scale(1.05);
-            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.6);
+            transform: translateY(-2px); /* Lift slightly on hover */
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.7); /* Stronger shadow on hover */
         }
 
         .download-btn i {
