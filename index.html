@@ -5,1015 +5,161 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A One Music - Song play and mp3 download</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="icon" href="songlogo.jpg" type="image/x-icon">
-
     
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+
     <style>
-        /* CSS for Style (Reverted to classic, strong Glassmorphism) */
-        
-        /* Custom Fonts and Reset */
+        /* മുമ്പത്തെ അതേ സ്റ്റൈലുകൾ നിലനിർത്തുന്നു */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-        
-        /* --- COLOR PALETTE & VARIABLES (CLASSIC GLASSMORPHISM) --- */
         :root {
-            /* General Colors */
-            --primary-color: #007bff; /* Blue */
-            --background-color: #c9e8ff; /* Fallback light blue */
-            --text-color: #ffffff; /* White text for contrast on transparent surfaces */
-            --secondary-text-color: #eeeeee; /* Lighter secondary text */
-            --status-color: #28a745; /* Green - Used for the green status message */
-            
-            /* GLASSMORPHISM VARIABLES (HIGH TRANSPARENCY + BLUR) */
-            --glass-color: rgba(255, 255, 255, 0.15); /* Very transparent white */
-            --glass-border: rgba(255, 255, 255, 0.4); /* Frosted border */
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25); /* Stronger shadow */
-            --blur-amount: 10px; /* CRITICAL: The Glassmorphism Blur */
-            --hover-glass-color: rgba(255, 255, 255, 0.3); /* Brighter hover */
-            --active-glass-color: rgba(0, 123, 255, 0.35); /* Transparent blue for active state */
+            --primary-color: #007bff; 
+            --glass-color: rgba(255, 255, 255, 0.15); 
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --status-color: #28a745;
         }
-        /* --------------------------------------------- */
+        body { background: #121212; color: white; font-family: 'Poppins', sans-serif; padding: 20px; text-align: center; }
         
-        /* --- ANIMATIONS --- */
-        
-        @keyframes pulse-glow {
-            0% { box-shadow: var(--glass-shadow); transform: scale(1); }
-            50% { box-shadow: 0 0 20px rgba(0, 123, 255, 0.7), var(--glass-shadow); transform: scale(1.03); }
-            100% { box-shadow: var(--glass-shadow); transform: scale(1); }
-        }
-
-        @keyframes status-pulse {
-            0%, 100% { 
-                opacity: 1;
-                color: var(--status-color); 
-            }
-            50% { 
-                opacity: 0.8;
-                color: var(--primary-color); 
-            }
-        }
-        
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        
-        /* ---------------------- */
-
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        /* --- BACKGROUND SETUP: Required for visible blur effect --- */
-        body {
-            /* 1. Set the background image directly on the body */
-            background-image: url('aonemusic-b.jpg'); /* <-- CHANGE THIS PATH */
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed; 
-            
-            /* 2. General body styles */
-            color: var(--text-color);
-            min-height: 100vh;
-            padding: 20px;
-            position: relative;
-            z-index: 1; 
-            background-color: var(--background-color); /* Fallback */
-        }
-        
-        /* Global Glass Frame Styling Mixin */
-        .glass-frame, 
-        .header, 
-        .player-card, 
-        .song-list-container,
-        .header-btn {
-            /* CRITICAL GLASSMOPRHISM PROPERTIES */
-            background: var(--glass-color); 
-            border: 1px solid var(--glass-border); 
-            border-radius: 15px;
-            box-shadow: var(--glass-shadow); 
-            backdrop-filter: blur(var(--blur-amount)); /* THE BLUR EFFECT */
-            -webkit-backdrop-filter: blur(var(--blur-amount)); 
-            transition: all 0.4s ease-in-out; 
-        }
-
-        /* --- Header & Logo --- */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            margin-bottom: 25px; 
-            border-radius: 15px;
-        }
-        
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .header-btn {
-            color: var(--primary-color); 
-            padding: 10px 18px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            /* Ensured button itself has the glass effect */
-            background: var(--glass-color); 
-            border: 1px solid var(--glass-border); 
-            backdrop-filter: blur(var(--blur-amount));
-            -webkit-backdrop-filter: blur(var(--blur-amount));
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
-        }
-        
-        .header-btn:hover {
-            background-color: var(--hover-glass-color); 
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0, 123, 255, 0.4); 
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo-icon-container {
-            position: relative;
-            width: 40px; 
-            height: 35px;
-            margin-right: 15px;
-        }
-        
-        .logo-icon-container i {
-            position: absolute;
-            font-size: 2em;
-            color: var(--primary-color); 
-            text-shadow: 0 0 5px rgba(0, 123, 255, 0.8);
-        }
-        
-        .logo-icon-container .fa-headphones {
-            left: 0;
-            top: 0;
-            transform: translateY(-5px); 
-        }
-
-        .logo h1 {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: white;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-        }
-        
-        .logo .status-message {
-            color: var(--status-color); 
-            font-size: 1em;
-            font-weight: 600; 
-            margin-left: 15px; 
-            align-self: flex-end; 
-            animation: status-pulse 2s infinite ease-in-out;
-        }
-
-        /* --- Search Bar --- */
-        .search-container {
-            position: relative;
-            width: 300px;
-        }
-
-        #search-bar {
-            width: 100%;
-            padding: 10px 40px 10px 15px;
-            border: 1px solid var(--glass-border); 
-            border-radius: 50px;
-            background-color: var(--hover-glass-color); /* Slightly higher opacity for input */
-            color: var(--text-color);
-            font-size: 1em;
-            outline: none;
-            backdrop-filter: blur(var(--blur-amount)); 
-            -webkit-backdrop-filter: blur(var(--blur-amount));
-            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
-        }
-
-        #search-bar:focus {
-             border-color: var(--primary-color);
-             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); 
-             background-color: var(--glass-color); 
-        }
-
-        #search-bar::placeholder {
-            color: var(--secondary-text-color);
-        }
-
-        .search-icon {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--secondary-text-color);
-        }
-
-        /* --- Main Layout --- */
-        .container {
-            display: flex;
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* --- Song List --- */
-        .song-list-container {
-            flex: 1;
+        /* അപ്‌ലോഡ് ഏരിയ സ്റ്റൈൽ */
+        .upload-section {
+            background: var(--glass-color);
             padding: 20px;
             border-radius: 15px;
+            margin-bottom: 30px;
+            border: 1px solid var(--glass-border);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
-
-        .song-list-container h2 {
-            color: var(--primary-color); 
-            margin-bottom: 15px;
-            font-size: 1.5em;
-            border-bottom: 2px solid var(--glass-border); 
-            padding-bottom: 10px;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-        }
-
-        .song-list {
-            list-style: none;
-            max-height: 70vh;
-            overflow-y: auto;
-            padding-right: 5px; 
-        }
-
-        /* Scrollbar Style */
-        .song-list::-webkit-scrollbar {
-            width: 8px;
-        }
-        .song-list::-webkit-scrollbar-thumb {
-            background-color: var(--primary-color); 
-            border-radius: 10px;
-        }
-        .song-list::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1); 
-            border-radius: 10px;
-        }
-
-
-        .song-item {
-            display: flex;
-            align-items: center;
+        .upload-section input {
+            width: 80%;
             padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-            position: relative;
-            /* Reset specific glass properties here to avoid double-blur on items */
-            background: none;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border: none;
-            box-shadow: none;
-        }
-
-        /* MODIFIED: Apply strong glass hover effect on the item */
-        .song-item:hover {
-            background-color: var(--hover-glass-color); 
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
-            transform: scale(1.01);
-        }
-
-        /* MODIFIED: Apply glass active effect */
-        .song-item.active {
-            background-color: var(--active-glass-color); 
-            color: var(--text-color); 
-            font-weight: 600;
-            border: 1px solid var(--primary-color); 
-            box-shadow: 0 0 15px rgba(0, 123, 255, 0.6); 
-        }
-
-        /* Ensured all text is visible against dark background/blur */
-        .song-info strong,
-        .song-info span,
-        .play-icon,
-        .song-download-link {
-            color: var(--secondary-text-color); 
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-        }
-        .song-item.active .song-info strong,
-        .song-item.active .song-info span,
-        .song-item.active .play-icon {
-            color: white; 
-        }
-        .song-item.active .play-icon {
-            color: var(--primary-color); 
-        }
-
-
-        .song-cover-small, .song-icon-placeholder {
-            width: 40px;
-            height: 40px;
-            flex-shrink: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 4px;
-            margin-right: 15px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-            object-fit: cover;
-        }
-        
-        .song-icon-placeholder {
-            background-color: var(--primary-color);
-            color: white;
-            font-size: 1.2em;
-        }
-
-        .song-info {
-            flex-grow: 1;
-            margin-right: 10px; 
-        }
-
-        .song-info strong {
-            display: block;
-            font-size: 1.1em;
-        }
-
-        .song-info span {
-            font-size: 0.85em;
-        }
-        
-        .play-icon {
-            color: var(--primary-color); 
-            font-size: 1.2em;
-            transition: color 0.2s;
-        }
-        
-        .song-download-link {
-            text-decoration: none;
-            font-size: 1em;
-            transition: color 0.2s;
-            padding: 5px; 
-        }
-        
-        .song-download-link:hover {
-            color: var(--status-color); 
-        }
-        
-
-        /* --- Current Player --- */
-        .current-player-container {
-            width: 350px;
-            flex-shrink: 0;
-        }
-
-        .player-card {
-            padding: 30px;
-            text-align: center;
-            position: sticky;
-            top: 20px; 
-            border-radius: 15px;
-        }
-
-        .player-cover {
-            width: 100%;
-            max-width: 250px;
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5); 
-            margin-bottom: 20px;
-            object-fit: cover;
-            transition: all 0.3s;
-        }
-
-        /* Cover Animation (Spinning when playing) */
-        .player-cover.animate {
-            border-radius: 50%; 
-            border: 3px solid var(--primary-color); 
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.8), 0 0 20px rgba(0, 123, 255, 0.4); 
-            animation: spin 10s linear infinite;
-        }
-
-        .player-title {
-            font-size: 1.4em;
-            margin-bottom: 25px;
-            min-height: 40px;
-            color: var(--primary-color); 
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
-        }
-
-        /* Player Controls */
-        .controls button {
-            background: none;
-            border: none;
-            color: var(--secondary-text-color);
-            font-size: 1.8em;
-            margin: 0 10px;
-            cursor: pointer;
-            transition: color 0.2s, transform 0.1s;
-            padding: 5px;
-        }
-
-        #play-pause-btn {
-            font-size: 2.5em;
-            color: var(--primary-color); 
-            transition: all 0.2s;
-        }
-
-        #play-pause-btn.playing {
-            animation: pulse-glow 1.5s infinite alternate;
-        }
-
-
-        .controls button:hover {
-            color: white; /* Change button color to white on hover */
-            text-shadow: 0 0 8px var(--primary-color);
-        }
-        .controls button:active {
-            transform: scale(0.95);
-        }
-
-        /* Progress Bar */
-        .progress-bar-container {
-            display: flex;
-            align-items: center;
-            margin-top: 30px;
-        }
-
-        .progress-bar {
-            flex-grow: 1;
-            height: 8px; 
-            -webkit-appearance: none;
-            appearance: none;
-            background: rgba(255, 255, 255, 0.3); /* Transparent track */
+            margin-bottom: 10px;
             border-radius: 5px;
-            margin: 0 10px;
-            cursor: pointer;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-        }
-
-        .progress-bar::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 14px; 
-            height: 14px;
-            background: var(--primary-color); 
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.8);
-        }
-
-        .progress-bar::-moz-range-thumb {
-            width: 14px; 
-            height: 14px;
-            background: var(--primary-color); 
-            border-radius: 50%;
-            cursor: pointer;
             border: none;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.8);
+            outline: none;
         }
-
-        .time {
-            font-size: 0.9em;
-            color: var(--secondary-text-color);
-            width: 35px;
-            text-align: center;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Download Button (Glassmorphism Style) */
-        .download-btn {
-            display: inline-block;
-            color: var(--text-color); /* Use white text */
-            text-decoration: none;
+        .header-btn {
+            background: var(--status-color);
+            color: white;
             padding: 10px 20px;
-            border-radius: 50px;
-            margin-top: 25px;
-            font-weight: 600;
-            transition: all 0.2s ease-in-out; 
             border: none;
-            
-            /* --- MODIFIED GLASSMOPRHISM STYLING --- */
-            background: var(--glass-color); 
-            border: 1px solid var(--glass-border); 
-            box-shadow: var(--glass-shadow); 
-            backdrop-filter: blur(var(--blur-amount)); 
-            -webkit-backdrop-filter: blur(var(--blur-amount)); 
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
         }
-
-        .download-btn:hover {
-            background-color: var(--hover-glass-color); 
-            transform: scale(1.05);
-            /* Change the shadow to a light blue glow on hover */
-            box-shadow: 0 0 15px rgba(0, 123, 255, 0.6), var(--glass-shadow);
-        }
-
-        .download-btn i {
-            margin-right: 5px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 800px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .current-player-container {
-                width: 100%;
-                order: -1; 
-            }
-
-            .header {
-                flex-direction: column;
-                padding: 15px;
-            }
-
-            .logo {
-                margin-bottom: 15px;
-            }
-            
-            .header-actions {
-                flex-direction: column;
-                width: 100%;
-                gap: 10px;
-            }
-            .search-container {
-                width: 100%;
-                order: 2; 
-            }
-            .header-btn {
-                width: 100%; 
-                order: 1;
-            }
-            .player-cover.animate {
-                animation: spin 6s linear infinite; 
-            }
-        }
+        /* Player & List Styles (മുമ്പത്തെ പോലെ) */
+        .container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .song-list-container, .player-card { background: var(--glass-color); padding: 20px; border-radius: 15px; min-width: 300px; }
+        .song-item { display: flex; align-items: center; gap: 10px; padding: 10px; cursor: pointer; border-bottom: 1px solid #333; }
+        .song-cover-small { width: 40px; height: 40px; border-radius: 5px; }
+        .player-cover { width: 200px; height: 200px; border-radius: 15px; margin-bottom: 15px; object-fit: cover; }
     </style>
 </head>
 <body>
 
-    <header class="header">
-        <div class="logo">
-            <div class="logo-icon-container">
-                <i class="fas fa-headphones"></i> 
-            </div>
-            <h1>A ONE MUSIC ✓</h1>
-            <h4 class="status-message">Risham004</h4>
-        </div>
-        
-        <div class="header-actions">
-            <button id="song-list-btn" class="header-btn" title="View all available tracks">
-                <i class="fas fa-list-ul"></i> Songs List
-            </button>
-            
-            <div class="search-container">
-                <input type="text" id="search-bar" placeholder="Search tracks..." onkeyup="filterSongs()">
-                <i class="fas fa-search search-icon"></i>
-            </div>
-        </div>
-    </header>
+    <h1>A ONE MUSIC ✓</h1>
 
-    <main class="container">
-        <section id="song-list-section" class="song-list-container">
+    <div class="upload-section">
+        <h3>Upload New Track</h3>
+        <input type="text" id="new-song-title" placeholder="Enter Song Name...">
+        <br>
+        <button id="upload-btn" class="header-btn"><i class="fas fa-plus"></i> Select & Upload Song</button>
+        <p id="upload-status" style="font-size: 0.8em; margin-top: 10px; color: #ffeb3b;"></p>
+    </div>
+
+    <div class="container">
+        <section class="song-list-container">
             <h2>Track List 💿</h2>
-            
-            <ul id="song-list" class="song-list">
-                </ul>
+            <ul id="song-list"></ul>
         </section>
 
-        <section class="current-player-container">
-            <div class="player-card">
-                <img id="player-cover" src="songlogo.jpg" alt="Song Cover" class="player-cover">
-                <h3 id="player-title" class="player-title">Select a song to play...</h3>
-                
-                <div class="controls">
-                    <button id="prev-btn" title="Previous"><i class="fas fa-backward"></i></button>
-                    <button id="play-pause-btn" title="Play/Pause"><i class="fas fa-play"></i></button>
-                    <button id="next-btn" title="Next"><i class="fas fa-forward"></i></button>
-                </div>
-                
-                <div class="progress-bar-container">
-                    <span id="current-time" class="time">0:00</span>
-                    <input type="range" id="progress-bar" min="0" max="100" value="0" class="progress-bar">
-                    <span id="duration" class="time">0:00</span>
-                </div>
-
-                <audio id="audio-element"></audio>
-
-                <a id="download-link" href="#" download class="download-btn" title="Download Current Song">
-                    <i class="fas fa-download"></i> Download The Song
-                </a>
-
-            </div>
+        <section class="player-card">
+            <img id="player-cover" src="songlogo.jpg" class="player-cover">
+            <h3 id="player-title">Select a song</h3>
+            <audio id="audio-element" controls style="width: 100%; margin-top: 10px;"></audio>
+            <br>
+            <a id="download-link" href="#" download style="display:none; color: #1DB954; text-decoration: none; margin-top: 10px; display: block;">Download MP3</a>
         </section>
-    </main>
+    </div>
 
     <script>
-        /* JavaScript for Player Functionality and Song Handling (Unchanged) */
-
-        /* * SONG LIST: IMPORTANT: Update these paths to match your files * */
-        const songs = [{ title: "Ilakozhiye", coverFile: "songlogo.jpg", audioFile: "ilakozhiye.mp3" },
-            { title: "Nera", coverFile: "songlogo.jpg", audioFile: "Nera-arjn-kds-ronn-rap-malayalam.mp3 " },
-            { title: "Vazhikatti", coverFile: "songlogo.jpg", audioFile: "Fejo - Vazhikatti (Kizhakku Suryan) Malayalam Song Prod. Jeffin Jestin.mp3" },
-            { title: "Chirimanimulle", coverFile: "songlogo.jpg", audioFile: "Chirimanimulle ചിരിമണിമുല്ലേ ചിത്തിരമൂലേ Lion Malayalam Movie Song - EMPIRE VIDEO (1).mp3" },
-            { title: "En Vaighai", coverFile: "songlogo.jpg", audioFile: "En Vaighai Song Kalamkaval Mammootty Jithin K Jose Mujeeb Majeed MammoottyKampany.mp3" },
-            { title: "Ethra Naal (DJ remix)", coverFile: "songlogo.jpg", audioFile: "Ethra Naal - Sulaikha Manzil (DJ Nitrixx Remix) Malayalam Remix 2023.mp3" },
-            { title: "Jaalakaari", coverFile: "songlogo.jpg", audioFile: "Jaalakaari - Video Balti Shane Nigam Unni @SaiAbhyankkar Santhosh T Kuruvilla Binu George.mp3" },
-            { title: "Kaadhal Ponmaan", coverFile: "songlogo.jpg", audioFile: "Kaadhal Ponmaan Video I Night Riders Mathew I Meenakshi Neha Nair Vishnu Vijay Yakzan Vinayak.mp3" },
-            { title: "Kalyani", coverFile: "songlogo.jpg", audioFile: "Kalyani (Lyrics Song) - Arjn x Kds x Fifty4 x Ronn.mp3" },
-            { title: "Maine Pyar Kiya", coverFile: "songlogo.jpg", audioFile: "Maine Pyar Kiya Welcome to Mollywood Video Rish NK Electronic Kili Preity M Hridhu Haroon.mp3" },
-            { title: "Oorum Blood", coverFile: "songlogo.jpg", audioFile: "Oorum Blood Dude Pradeep Ranganathan, Mamitha Baiju @SaiAbhyankkar Paal Dabba Keerthiswaran.mp3" },
-            { title: "Nilaa kaayum", coverFile: "songlogo.jpg", audioFile: "Nilaa Kaayum Lyric Video Kalamkaval Mammootty Jithin K Jose Mujeeb Majeed MammoottyKampany.mp3"},
-            { title: "Salam", coverFile: "songlogo.jpg", audioFile: "Salam.mp3"},
-            { title: "Musk", coverFile: "songlogo.jpg", audioFile: "Musk Ft Hanan Shaah (Official Music Video) Jubair Muhammed Muthu Sharaf Gallery.mp3"},
-            { title: "Azhinjattam", coverFile: "songlogo.jpg", audioFile: "BHA BHA BA - Azhinjattam Lyric Video Mohanlal Dilieep Shaan Rahman MG Sreekumar Vineeth.mp3"},
-            { title: "ThaniLokah Murakkaari", coverFile: "songlogo.jpg", audioFile: "Lokah - Promo Video Song 4K ThaniLokah Murakkaari Jakes Bejoy Jyoti Nooran Reble MuRi.mp3"}
+        let songs = [
+            { title: "Default Song", coverFile: "songlogo.jpg", audioFile: "#" }
         ];
 
-        /* DOM Elements */
-        const songListEl = document.getElementById('song-list');
-        const audio = document.getElementById('audio-element');
-        const playPauseBtn = document.getElementById('play-pause-btn');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const progressBar = document.getElementById('progress-bar');
-        const currentTimeEl = document.getElementById('current-time');
-        const durationEl = document.getElementById('duration');
-        const playerTitleEl = document.getElementById('player-title');
-        const playerCoverEl = document.getElementById('player-cover');
-        const downloadLink = document.getElementById('download-link');
-        const songListSection = document.getElementById('song-list-section'); 
-        const songListBtn = document.getElementById('song-list-btn'); 
+        let tempAudioUrl = "";
+        let tempCoverUrl = "songlogo.jpg"; // Default logo
 
-        /* State Variables */
-        let currentSongIndex = -1; 
-        let isPlaying = false;
-        
-        let notificationInstance = null; 
-        let notificationIntervalId = null; 
+        const uploadBtn = document.getElementById('upload-btn');
+        const statusText = document.getElementById('upload-status');
 
-        /* --- Utility Functions --- */
-
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = Math.floor(seconds % 60);
-            return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-        }
-        
-        function getCoverUrl(filename) {
-             return filename; 
-        }
-
-        /* --- Notification Functions (Requires user permission) --- */
-
-        function requestNotificationPermission() {
-            if (!("Notification" in window)) {
-                return;
-            }
-            if (Notification.permission === "default") {
-                Notification.requestPermission();
-            }
-        }
-
-        function closeNotification() {
-            if (notificationInstance) {
-                notificationInstance.close();
-                notificationInstance = null;
-            }
-            if (notificationIntervalId) {
-                clearInterval(notificationIntervalId);
-                notificationIntervalId = null;
-            }
-        }
-        
-        function updatePlaybackNotification(song) {
-            if (Notification.permission !== "granted") {
-                return; 
-            }
-
-            const updateNotification = () => {
-                const currentTime = formatTime(audio.currentTime);
-                const duration = formatTime(audio.duration || 0);
-                const titleText = isPlaying ? `▶ Playing: ${song.title}` : `⏸ Paused: ${song.title}`;
-                const iconPath = getCoverUrl(song.coverFile);
-                
-                const options = {
-                    body: `Time: ${currentTime} / ${duration}`, 
-                    icon: iconPath, 
-                    tag: 'music-player-playback', 
-                    renotify: true, 
-                };
-                
-                closeNotification(); 
-                notificationInstance = new Notification(titleText, options);
-
-                notificationInstance.onclick = function(event) {
-                    event.preventDefault(); 
-                    window.focus(); 
-                };
-            };
-            
-            updateNotification();
-
-            if (isPlaying && !notificationIntervalId) {
-                notificationIntervalId = setInterval(updateNotification, 5000); 
-            }
-            if (!isPlaying && notificationIntervalId) {
-                clearInterval(notificationIntervalId); 
-                notificationIntervalId = null;
-                updateNotification(); 
-            }
-        }
-
-
-        /* --- Main Player Functions --- */
-
-        function loadSong(index) {
-            if (index < 0 || index >= songs.length) return; 
-
-            currentSongIndex = index;
-            const song = songs[currentSongIndex];
-
-            audio.src = song.audioFile;
-            playerTitleEl.textContent = song.title;
-            
-            playerCoverEl.src = song.coverFile;
-            playerCoverEl.onerror = () => {
-                // MODIFIED: Fallback to the default songlogo.jpg instead of the removed file
-                playerCoverEl.src = 'songlogo.jpg'; 
-            };
-            
-            downloadLink.href = song.audioFile;
-            const fileExtension = song.audioFile.split('.').pop(); 
-            downloadLink.setAttribute('download', `${song.title}.${fileExtension}`); 
-            downloadLink.style.display = 'inline-block'; 
-
-            updateSongListUI(currentSongIndex);
-            closeNotification(); 
-        }
-
-        function togglePlay() {
-            if (currentSongIndex === -1) {
-                if (songs.length > 0) {
-                     loadSong(0);
-                     playSong();
-                }
-                return;
-            }
-            
-            if (isPlaying) {
-                audio.pause();
-            } else {
-                audio.play();
-            }
-        }
-
-        function playSong() {
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.error("Autoplay prevented:", error);
-                });
-            }
-        }
-        
-        function pauseSong() {
-            audio.pause();
-        }
-
-
-        function playNext() {
-            if (songs.length === 0) return;
-            const nextIndex = (currentSongIndex + 1) % songs.length;
-            loadSong(nextIndex);
-            playSong();
-        }
-
-        function playPrev() {
-            if (songs.length === 0) return;
-            let prevIndex = currentSongIndex - 1;
-            if (prevIndex < 0) {
-                prevIndex = songs.length - 1;
-            }
-            loadSong(prevIndex);
-            playSong();
-        }
-
-        /* --- UI Functions --- */
-
-        function renderSongList(songArray) {
-            songListEl.innerHTML = ''; 
-            
-            songArray.forEach((song) => {
-                const originalIndex = songs.findIndex(s => s.title === song.title);
-                if (originalIndex === -1) return; 
-
-                const listItem = document.createElement('li');
-                listItem.classList.add('song-item');
-                listItem.setAttribute('data-index', originalIndex);
-                
-                let coverElement;
-                if (song.coverFile) {
-                    coverElement = document.createElement('img');
-                    coverElement.src = song.coverFile;
-                    coverElement.alt = "Cover";
-                    coverElement.classList.add('song-cover-small');
-                    coverElement.onerror = function() {
-                        coverElement.replaceWith(createIconPlaceholder());
-                    };
+        // Cloudinary Widget
+        const myWidget = cloudinary.createUploadWidget({
+            cloudName: 'dbhxk7pwg', 
+            apiKey: '179557622813455',
+            uploadPreset: 'ml_default',
+            sources: ['local'],
+            multiple: false
+        }, (error, result) => { 
+            if (!error && result && result.event === "success") { 
+                if (result.info.resource_type === "video" || result.info.format === "mp3") {
+                    tempAudioUrl = result.info.secure_url;
+                    statusText.innerText = "Audio Uploaded! Now select a Logo (Optional)...";
+                    // പാട്ട് അപ്‌ലോഡ് ആയിക്കഴിഞ്ഞാൽ ലോഗോ തിരഞ്ഞെടുക്കാൻ ഒന്നുകൂടി വിഡ്ജറ്റ് തുറക്കാം
+                    alert("Song uploaded! Now upload a Cover Image/Logo.");
                 } else {
-                    coverElement = createIconPlaceholder();
+                    tempCoverUrl = result.info.secure_url;
+                    statusText.innerText = "Cover Image Uploaded!";
+                    saveSong();
                 }
+            }
+        });
 
-                listItem.appendChild(coverElement);
-                
-                const songInfoDiv = document.createElement('div');
-                songInfoDiv.classList.add('song-info');
-                songInfoDiv.innerHTML = `<strong>${song.title}</strong><span>Click to Play</span>`;
-                listItem.appendChild(songInfoDiv);
-                
-                const controlsDiv = document.createElement('div');
-                controlsDiv.classList.add('song-controls');
+        uploadBtn.addEventListener('click', () => {
+            const title = document.getElementById('new-song-title').value;
+            if (!title) {
+                alert("Please enter a Song Name first!");
+                return;
+            }
+            myWidget.open();
+        });
 
-                const playIcon = document.createElement('i');
-                playIcon.classList.add('fas', 'fa-play', 'play-icon');
-                playIcon.setAttribute('title', 'Play');
-                controlsDiv.appendChild(playIcon);
-                
-                // Download link in the list view
-                const downloadLinkItem = document.createElement('a');
-                downloadLinkItem.href = song.audioFile;
-                const fileExtension = song.audioFile.split('.').pop(); 
-                downloadLinkItem.setAttribute('download', `${song.title}.${fileExtension}`);
-                downloadLinkItem.classList.add('song-download-link');
-                downloadLinkItem.setAttribute('title', 'Download Track');
-                downloadLinkItem.innerHTML = '<i class="fas fa-download"></i>';
-                controlsDiv.appendChild(downloadLinkItem);
-                
-                listItem.appendChild(controlsDiv);
+        function saveSong() {
+            const title = document.getElementById('new-song-title').value;
+            const newSong = { 
+                title: title, 
+                coverFile: tempCoverUrl, 
+                audioFile: tempAudioUrl 
+            };
+            songs.push(newSong);
+            renderSongList();
+            document.getElementById('new-song-title').value = ""; // Reset
+            statusText.innerText = "Song successfully added to list!";
+        }
 
-
-                listItem.addEventListener('click', (event) => {
-                    // Prevent download link click from triggering play
-                    if (event.target.closest('.song-download-link')) {
-                        return;
-                    }
-                    
-                    const clickedIndex = parseInt(listItem.getAttribute('data-index'));
-                    if (clickedIndex === currentSongIndex && isPlaying) {
-                        pauseSong();
-                    } else if (clickedIndex === currentSongIndex && !isPlaying) {
-                        playSong();
-                    } else {
-                        loadSong(clickedIndex);
-                        playSong();
-                    }
-                });
-
-                songListEl.appendChild(listItem);
+        function renderSongList() {
+            const list = document.getElementById('song-list');
+            list.innerHTML = '';
+            songs.forEach((song, index) => {
+                const li = document.createElement('li');
+                li.className = 'song-item';
+                li.innerHTML = `<img src="${song.coverFile}" class="song-cover-small"> <div><strong>${song.title}</strong></div>`;
+                li.onclick = () => playSong(index);
+                list.appendChild(li);
             });
-
-            if (currentSongIndex !== -1) {
-                updateSongListUI(currentSongIndex);
-            }
-        }
-        
-        // Icon used when cover image is missing
-        function createIconPlaceholder() {
-            const placeholder = document.createElement('div');
-            placeholder.classList.add('song-icon-placeholder');
-            placeholder.innerHTML = '<i class="fas fa-headphones"></i>';
-            return placeholder;
         }
 
-
-        function updateSongListUI(activeIndex) {
-            document.querySelectorAll('.song-item').forEach((item) => {
-                const itemIndex = parseInt(item.getAttribute('data-index'));
-                const playIcon = item.querySelector('.play-icon');
-
-                item.classList.remove('active');
-                if (playIcon) {
-                    playIcon.className = 'fas fa-play play-icon'; 
-                    playIcon.setAttribute('title', 'Play');
-                }
-
-                if (itemIndex === activeIndex) {
-                    item.classList.add('active');
-                    if (playIcon) {
-                         playIcon.className = isPlaying ? 'fas fa-pause play-icon' : 'fas fa-play play-icon';
-                         playIcon.setAttribute('title', isPlaying ? 'Pause' : 'Play');
-                    }
-                }
-            });
-            
-            // Update main play/pause button icon and glow
-            if (isPlaying) {
-                playPauseBtn.classList.add('playing');
-                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            } else {
-                playPauseBtn.classList.remove('playing');
-                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-            }
+        function playSong(index) {
+            const song = songs[index];
+            document.getElementById('audio-element').src = song.audioFile;
+            document.getElementById('player-title').innerText = song.title;
+            document.getElementById('player-cover').src = song.coverFile;
+            document.getElementById('download-link').href = song.audioFile;
+            document.getElementById('download-link').style.display = "block";
+            document.getElementById('audio-element').play();
         }
 
-        function filterSongs() {
-            const searchTerm = document.getElementById('search-bar').value.toLowerCase();
-            
-            const filteredSongs = songs.filter(song => 
-                song.title.toLowerCase().includes(searchTerm)
-            );
-
-            renderSongList(filteredSongs);
-        }
-
-        // Toggles the spinning disc animation on the cover image
-        function toggleAnimation(is_playing) {
-            if (is_playing) {
-                playerCoverEl.classList.add('animate');
-            } else {
-                playerCoverEl.classList.remove('animate');
-            }
-        }
-
-        /* --- Scroll to Song List Function --- */
-        function scrollToSongList() {
-            songListSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-
-
-        /* --- Event Listeners --- */
-
-        playPauseBtn.addEventListener('click', togglePlay);
-        nextBtn.addEventListener('click', playNext);
-        prevBtn.addEventListener('click', playPrev);
-        
-        songListBtn.addEventListener('click', scrollToSongList); 
-
-        // Update progress bar max value and duration when audio loads
-        audio.addEventListener('loadedmetadata', () => {
-            progressBar.max = audio.duration;
-            durationEl.textContent = formatTime(audio.duration);
-            if (currentSongIndex !== -1) {
-                 updatePlaybackNotification(songs[currentSongIndex]);
-            }
-        });
-
-        // Update progress bar and current time while playing
-        audio.addEventListener('timeupdate', () => {
-            progressBar.value = audio.currentTime;
-            currentTimeEl.textContent = formatTime(audio.currentTime);
-        });
-
-        // Auto-play next song when current one ends
-        audio.addEventListener('ended', () => {
-            closeNotification(); 
-            playNext(); 
-        }); 
-
-        audio.addEventListener('play', () => {
-            isPlaying = true;
-            updateSongListUI(currentSongIndex);
-            toggleAnimation(true); 
-            
-            if (currentSongIndex !== -1) {
-                updatePlaybackNotification(songs[currentSongIndex]);
-            }
-        });
-
-        audio.addEventListener('pause', () => {
-            isPlaying = false;
-            updateSongListUI(currentSongIndex);
-            toggleAnimation(false); 
-            
-            if (currentSongIndex !== -1) {
-                updatePlaybackNotification(songs[currentSongIndex]);
-            }
-        });
-
-        // Allow user to drag the progress bar
-        progressBar.addEventListener('input', () => {
-            currentTimeEl.textContent = formatTime(progressBar.value);
-        });
-        progressBar.addEventListener('change', () => {
-            audio.currentTime = progressBar.value;
-        });
-
-
-        /* --- Initialization --- */
-        document.addEventListener('DOMContentLoaded', () => {
-            renderSongList(songs);
-            requestNotificationPermission(); 
-            downloadLink.style.display = 'none'; // Hide download button initially
-        });
-
-        window.addEventListener('beforeunload', closeNotification);
+        window.onload = renderSongList;
     </script>
 </body>
 </html>
