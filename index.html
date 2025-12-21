@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A One Music - Advanced Music Site</title>
+    <title>A ONE MUSIC - English Version</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
@@ -13,6 +13,7 @@
             --primary-color: #007bff;
             --glass: rgba(255, 255, 255, 0.1);
             --border: rgba(255, 255, 255, 0.2);
+            --success: #28a745;
         }
 
         body {
@@ -43,12 +44,13 @@
         input[type="text"] {
             width: 100%; padding: 12px; border-radius: 8px; border: none;
             background: rgba(255,255,255,0.05); color: white; box-sizing: border-box;
+            outline: none;
         }
 
         .file-btn {
             background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px;
             cursor: pointer; display: block; margin-top: 5px; border: 1px dashed var(--border);
-            transition: 0.3s;
+            transition: 0.3s; text-align: center;
         }
         .file-btn:hover { background: rgba(255,255,255,0.2); }
 
@@ -57,6 +59,7 @@
             padding: 15px; border-radius: 50px; font-weight: bold;
             cursor: pointer; width: 100%; margin-top: 15px; transition: 0.3s;
         }
+        .submit-btn:hover { background: #0056b3; transform: scale(1.02); }
 
         /* Animation Area */
         #upload-status-area { display: none; margin-top: 20px; }
@@ -86,33 +89,33 @@
 </head>
 <body>
 
-    <h1>A ONE MUSIC ✓</h1>
+    <h1 style="letter-spacing: 2px;">A ONE MUSIC ✓</h1>
 
     <div class="upload-card">
-        <h3><i class="fas fa-music"></i> പുതിയ പാട്ട് ചേർക്കുക</h3>
+        <h3><i class="fas fa-cloud-upload-alt"></i> UPLOAD NEW TRACK</h3>
         
         <div class="input-group">
-            <label>പാട്ടിന്റെ പേര്</label>
-            <input type="text" id="song-name" placeholder="Song Name ടൈപ്പ് ചെയ്യുക...">
+            <label>Song Title</label>
+            <input type="text" id="song-name" placeholder="Enter song name here...">
         </div>
 
         <div class="input-group">
-            <label>ഓഡിയോ (MP3)</label>
+            <label>Audio File (MP3)</label>
             <div class="file-btn" onclick="openWidget('audio')"><i class="fas fa-file-audio"></i> Choose Audio</div>
-            <span id="audio-name" style="font-size: 0.75em; color: #00ff88;"></span>
+            <span id="audio-name" style="font-size: 0.75em; color: var(--success); display: block; margin-top: 5px;"></span>
         </div>
 
         <div class="input-group">
-            <label>കവർ ഫോട്ടോ (Logo)</label>
+            <label>Cover Art (Logo)</label>
             <div class="file-btn" onclick="openWidget('image')"><i class="fas fa-image"></i> Choose Logo</div>
-            <span id="image-name" style="font-size: 0.75em; color: #00ff88;"></span>
+            <span id="image-name" style="font-size: 0.75em; color: var(--success); display: block; margin-top: 5px;"></span>
         </div>
 
-        <button class="submit-btn" id="final-submit" onclick="addToSite()">ADD TO MY SITE</button>
+        <button class="submit-btn" id="final-submit" onclick="addToSite()">ADD TO PLAYLIST</button>
 
         <div id="upload-status-area">
             <div class="loader"></div>
-            <div id="status-text" style="font-size: 0.9em;">Saving to your library...</div>
+            <div id="status-text" style="font-size: 0.9em;">Processing & Saving...</div>
             <div class="progress-container"><div class="progress-bar" id="p-bar"></div></div>
         </div>
     </div>
@@ -124,8 +127,8 @@
         </div>
         <div class="player-box">
             <img id="p-img" src="songlogo.jpg" style="width: 100%; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
-            <h4 id="p-title">പാട്ട് പ്ലേ ചെയ്യാൻ സെലക്ട് ചെയ്യൂ</h4>
-            <audio id="main-audio" controls style="width: 100%;"></audio>
+            <h4 id="p-title" style="margin-top: 15px; color: var(--primary-color);">Select a song to play</h4>
+            <audio id="main-audio" controls style="width: 100%; margin-top: 10px;"></audio>
         </div>
     </div>
 
@@ -134,12 +137,12 @@
         let tempAudio = "";
         let tempImage = "songlogo.jpg";
         
-        // നിങ്ങളുടെ പുതിയ Cloudinary വിവരങ്ങൾ
+        // Your New Cloudinary Credentials
         const cloudName = "dcsczlahu";
         const apiKey = "213379191614618";
         const uploadPreset = "ml_default";
 
-        // പേജ് ലോഡ് ചെയ്യുമ്പോൾ ലോക്കൽ സ്റ്റോറേജിൽ നിന്ന് ഡാറ്റ എടുക്കുന്നു
+        // Load data from LocalStorage on page load
         window.onload = () => {
             const savedData = localStorage.getItem('my_music_list');
             if(savedData) {
@@ -159,10 +162,10 @@
                 if (!error && result && result.event === "success") {
                     if (type === 'audio') {
                         tempAudio = result.info.secure_url;
-                        document.getElementById('audio-name').innerText = "✅ Audio Ready";
+                        document.getElementById('audio-name').innerText = "✅ Audio file linked successfully";
                     } else {
                         tempImage = result.info.secure_url;
-                        document.getElementById('image-name').innerText = "✅ Image Ready";
+                        document.getElementById('image-name').innerText = "✅ Image file linked successfully";
                     }
                 }
             });
@@ -171,11 +174,11 @@
         function addToSite() {
             const name = document.getElementById('song-name').value;
             if(!name || !tempAudio) {
-                alert("പാട്ടിന്റെ പേരും ഓഡിയോ ഫയലും നിർബന്ധമാണ്!");
+                alert("Please provide both Song Title and Audio file!");
                 return;
             }
 
-            // Animation കാണിക്കുന്നു
+            // Show Animation
             const statusArea = document.getElementById('upload-status-area');
             const pBar = document.getElementById('p-bar');
             statusArea.style.display = "block";
@@ -187,13 +190,14 @@
                     clearInterval(interval);
                     songs.push({ title: name, audio: tempAudio, img: tempImage });
                     
-                    // ലോക്കൽ സ്റ്റോറേജിലേക്ക് സേവ് ചെയ്യുന്നു
+                    // Save to LocalStorage
                     localStorage.setItem('my_music_list', JSON.stringify(songs));
                     
                     updateList();
                     statusArea.style.display = "none";
                     document.getElementById('final-submit').disabled = false;
                     resetForm();
+                    alert("Song added successfully!");
                 } else {
                     width += 10;
                     pBar.style.width = width + "%";
@@ -203,12 +207,15 @@
 
         function updateList() {
             const list = document.getElementById('track-list');
-            list.innerHTML = songs.length === 0 ? "<p style='color:#666'>ലിസ്റ്റിൽ പാട്ടുകൾ ഒന്നുമില്ല</p>" : "";
+            list.innerHTML = songs.length === 0 ? "<p style='color:#666'>No tracks available</p>" : "";
             songs.forEach((s, i) => {
                 list.innerHTML += `
                     <div class="song-item" onclick="playSong(${i})">
                         <img src="${s.img}">
-                        <div style="text-align:left"><strong>${s.title}</strong><br><small style="color:#aaa">Ready to Play</small></div>
+                        <div style="text-align:left">
+                            <strong>${s.title}</strong><br>
+                            <small style="color:#aaa">Click to play</small>
+                        </div>
                     </div>`;
             });
         }
