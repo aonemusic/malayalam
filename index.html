@@ -15,17 +15,14 @@
         
         .container { max-width: 500px; margin: 0 auto; padding: 15px; display: flex; flex-direction: column; gap: 20px; }
         
-        /* Search Box Fix */
         .search-box { width: 100%; display: block; }
         input#search { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #333; background: #1a1a1a; color: white; box-sizing: border-box; }
 
-        /* Song List Fix - Vertical */
         #track-list { width: 100%; display: flex; flex-direction: column; gap: 12px; }
         .track-item { display: flex; align-items: center; gap: 15px; padding: 12px; border-radius: 12px; background: #121214; border: 1px solid #27272a; cursor: pointer; }
         .track-item img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
         .track-info { flex: 1; }
 
-        /* Overlays */
         .overlay { position: fixed; inset: 0; background: var(--bg); z-index: 4000; display: none; flex-direction: column; overflow-y: auto; padding-bottom: 50px; }
         .full-player { position: fixed; inset: 0; background: linear-gradient(to bottom, #2a2a2a, #0b0b0d); z-index: 5000; display: none; flex-direction: column; padding: 30px; }
         
@@ -51,7 +48,7 @@
 
     <div class="container">
         <div id="auth-box" style="background: #18181b; padding: 20px; border-radius: 12px;">
-            <h2 style="text-align: center;">Login</h2>
+            <h2 style="text-align: center;">Join A ONE</h2>
             <input type="email" id="a-email" placeholder="Email" style="width:100%; padding:12px; margin:10px 0; background:#27272a; border:none; color:white; border-radius:8px;">
             <input type="password" id="a-pass" placeholder="Password" style="width:100%; padding:12px; margin:10px 0; background:#27272a; border:none; color:white; border-radius:8px;">
             <button class="btn" onclick="authAction()">Continue</button>
@@ -101,7 +98,10 @@
             <button class="btn" style="background:#333; color:white;" onclick="pick('l')">Select Logo</button>
             <button class="btn" style="background:#333; color:white;" onclick="pick('s')">Select Audio</button>
             <button id="pub-btn" class="btn" style="display:none;" onclick="publish()">Publish</button>
-            <button class="btn" style="background:#f43f5e; color:white; margin-top: 50px;" onclick="logout()">Logout Account</button>
+            
+            <hr style="border: 0.5px solid #27272a; margin: 30px 0;">
+            <button class="btn" style="background:#27272a; color:white;" onclick="logout()">Logout Account</button>
+            <button class="btn" style="background:#331111; color:#ff4444; border: 1px solid #ff4444; margin-top: 15px;" onclick="deleteAccount()">Delete Account</button>
         </div>
     </div>
 
@@ -121,7 +121,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, remove, get, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
@@ -156,7 +156,9 @@
 
         window.authAction = async () => {
             const e = document.getElementById('a-email').value, p = document.getElementById('a-pass').value;
-            signInWithEmailAndPassword(auth, e, p).catch(err => alert(err.message));
+            signInWithEmailAndPassword(auth, e, p).catch(err => {
+                createUserWithEmailAndPassword(auth, e, p).catch(e2 => alert(e2.message));
+            });
         };
 
         function loadSongs() {
@@ -178,7 +180,6 @@
                         <b>${s.title}</b><br>
                         <small style="color:#888;">${s.artist} • <i class="far fa-heart"></i> ${likes}</small>
                     </div>
-                    <i class="fas fa-play" style="color:var(--primary);"></i>
                 </div>`;
             });
         };
@@ -189,7 +190,7 @@
             document.getElementById('fp-art').innerText = s.artist;
             document.getElementById('fp-img').src = s.logo;
             document.getElementById('fp-up-img').src = s.up_p || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-            document.getElementById('fp-up-name').innerText = s.up;
+            document.getElementById('fp-up-name').innerText = s.up || "Unknown";
             
             onValue(ref(rtdb, `songs/${id}/likes`), snap => document.getElementById('fp-likes-count').innerText = snap.size || 0);
             onValue(ref(rtdb, `songs/${id}/views`), snap => document.getElementById('fp-views').innerText = snap.val() || 0);
@@ -210,7 +211,6 @@
                 document.getElementById('view-p-name').innerText = d.up || "User";
                 document.getElementById('view-p-img').src = d.up_p || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
             });
-            
             const pList = document.getElementById('user-songs'); pList.innerHTML = "";
             songs.filter(s => s.uid === targetUid).forEach(s => {
                 pList.innerHTML += `<div class="track-item" onclick="playSong('${s.id}')"><img src="${s.logo}"><b>${s.title}</b></div>`;
@@ -228,14 +228,34 @@
         };
 
         window.publish = () => {
-            const sData = { title: document.getElementById('s-title').value, artist: document.getElementById('s-artist').value, logo: tempL, url: tempS, uid: auth.currentUser.uid, up: auth.currentUser.displayName, up_p: auth.currentUser.photoURL, views: 0 };
+            const sData = { title: document.getElementById('s-title').value, artist: document.getElementById('s-artist').value, logo: tempL, url: tempS, uid: auth.currentUser.uid, up: auth.currentUser.displayName || "User", up_p: auth.currentUser.photoURL || "", views: 0 };
             push(ref(rtdb, 'songs'), sData);
-            set(ref(rtdb, `users/${auth.currentUser.uid}/up`), auth.currentUser.displayName);
-            set(ref(rtdb, `users/${auth.currentUser.uid}/up_p`), auth.currentUser.photoURL);
+            set(ref(rtdb, `users/${auth.currentUser.uid}/up`), auth.currentUser.displayName || "User");
+            set(ref(rtdb, `users/${auth.currentUser.uid}/up_p`), auth.currentUser.photoURL || "");
             toggleUI('settings-ui', false);
         };
 
         window.logout = () => signOut(auth).then(() => location.reload());
+
+        // Delete Account Function
+        window.deleteAccount = async () => {
+            const user = auth.currentUser;
+            if(!user) return;
+            const confirmDel = confirm("നിങ്ങളുടെ അക്കൗണ്ട് സ്ഥിരമായി ഡിലീറ്റ് ചെയ്യണോ? ഈ തീരുമാനം മാറ്റാൻ കഴിയില്ല.");
+            if(confirmDel) {
+                try {
+                    await remove(ref(rtdb, `users/${user.uid}`));
+                    await remove(ref(rtdb, `online_users/${user.uid}`));
+                    await deleteUser(user);
+                    alert("Account Deleted Successfully");
+                    location.reload();
+                } catch (e) {
+                    alert("Error: ഈ പ്രവർത്തനം ചെയ്യുന്നതിനായി നിങ്ങൾ വീണ്ടും ലോഗിൻ ചെയ്യേണ്ടതുണ്ട്.");
+                    signOut(auth).then(()=> location.reload());
+                }
+            }
+        };
+
         window.togglePlay = () => audio.paused ? audio.play() : audio.pause();
     </script>
 </body>
