@@ -24,10 +24,10 @@
 
         /* Feed Card */
         .feed { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding-bottom: 100px; }
-        .card { background: var(--glass); border-radius: 15px; padding: 10px; border: 1px solid #222; cursor: pointer; transition: 0.3s; }
+        .card { background: var(--glass); border-radius: 15px; padding: 10px; border: 1px solid #222; cursor: pointer; transition: 0.3s; position: relative; }
         .card img { width: 100%; aspect-ratio: 1/1; border-radius: 10px; object-fit: cover; }
         .card h4 { margin-top: 8px; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .stats { display: flex; justify-content: space-between; font-size: 0.7rem; color: #888; margin-top: 5px; }
+        .stats { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: #888; margin-top: 5px; }
 
         /* Full Player */
         .player { position: fixed; inset: 0; background: #000; z-index: 6000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
@@ -123,7 +123,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, updateProfile, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, onValue, push, set, update, onDisconnect, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, push, set, update, onDisconnect, increment, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const config = {
             apiKey: "AIzaSyAthFMO8zGT5BtiOkh4zkc71jL06LR_F9c",
@@ -143,7 +143,6 @@
         let tracks = [];
         let playingId = null;
 
-        // 1. Authentication & Live Presence
         signInAnonymously(auth).catch(err => console.log("Auth Error: ", err));
 
         onAuthStateChanged(auth, u => {
@@ -163,13 +162,12 @@
             document.getElementById('live-count').innerText = "Online: " + count;
         });
 
-        // 2. Data Sync
         onValue(ref(db, 'songs'), snap => {
             tracks = [];
             if(snap.exists()) {
                 snap.forEach(s => { tracks.push({id: s.key, ...s.val()}); });
-                draw();
             }
+            draw();
             document.getElementById('splash').style.display = 'none';
             document.getElementById('app-ui').style.display = 'block';
         });
@@ -181,19 +179,35 @@
             const filtered = tracks.filter(t => t.title.toLowerCase().includes(q));
             
             filtered.forEach(t => {
+                // Only show delete button if current user is the owner
+                const isOwner = auth.currentUser && t.owner === auth.currentUser.uid;
+                
                 feed.innerHTML += `
-                <div class="card" onclick="startPlay('${t.id}')">
-                    <img src="${t.logo || 'https://via.placeholder.com/150'}">
-                    <h4>${t.title}</h4>
+                <div class="card">
+                    <div onclick="startPlay('${t.id}')">
+                        <img src="${t.logo || 'https://via.placeholder.com/150'}">
+                        <h4>${t.title}</h4>
+                    </div>
                     <div class="stats">
-                        <span><i class="fas fa-play"></i> ${t.views || 0}</span>
-                        <span><i class="fas fa-heart"></i> ${t.likes || 0}</span>
+                        <div>
+                            <span><i class="fas fa-play"></i> ${t.views || 0}</span>
+                            <span style="margin-left:8px"><i class="fas fa-heart"></i> ${t.likes || 0}</span>
+                        </div>
+                        ${isOwner ? `<i class="fas fa-trash-alt" style="color: #ff4d4d; cursor: pointer;" onclick="deleteSong('${t.id}')"></i>` : ''}
                     </div>
                 </div>`;
             });
         };
 
-        // 3. Player Controls
+        // NEW: Delete Function
+        window.deleteSong = (id) => {
+            if(confirm("Permanently delete this song?")) {
+                remove(ref(db, `songs/${id}`))
+                    .then(() => alert("Song removed."))
+                    .catch(e => alert("Error: " + e.message));
+            }
+        };
+
         window.startPlay = (id) => {
             playingId = id;
             const t = tracks.find(x => x.id === id);
@@ -206,7 +220,6 @@
             document.getElementById('player').style.display = 'flex';
             document.getElementById('ctrl').className = "fas fa-pause-circle";
             
-            // View Increment
             update(ref(db, `songs/${id}`), { views: increment(1) });
         };
 
@@ -215,7 +228,6 @@
             else { engine.pause(); document.getElementById('ctrl').className = "fas fa-play-circle"; }
         };
 
-        // Seekbar logic
         engine.ontimeupdate = () => {
             if(!isNaN(engine.duration)) {
                 const pct = (engine.currentTime / engine.duration) * 100;
@@ -242,7 +254,6 @@
             document.getElementById('like-icon').style.color = "red";
         };
 
-        // 4. Profile & Upload Media
         window.upMedia = (type) => {
             cloudinary.openUploadWidget({cloudName:"dcsczlahu", uploadPreset:"ml_default"}, (err, res) => {
                 if(!err && res.event === "success") {
