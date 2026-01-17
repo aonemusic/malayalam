@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A One Music | Malayalam</title>
+    <title>A One Music | Professional Studio</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
@@ -25,21 +25,31 @@
             overflow-x: hidden;
         }
 
-        /* --- Auth Section (Hidden by Default) --- */
+        /* --- Global Loading Overlay --- */
+        #loading-screen {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 5000; align-items: center; justify-content: center;
+            flex-direction: column;
+        }
+        .spinner {
+            width: 45px; height: 45px; border: 4px solid var(--glass); border-top: 4px solid var(--accent);
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- Auth Section --- */
         #auth-screen { display: none; align-items: center; justify-content: center; height: 100vh; }
         .glass-box { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 30px; padding: 40px; width: 90%; max-width: 380px; text-align: center; }
         input { width: 100%; padding: 15px; margin: 10px 0; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; color: #fff; outline: none; }
         .btn { width: 100%; padding: 15px; background: var(--accent); border: none; color: white; border-radius: 12px; font-weight: bold; cursor: pointer; }
 
-        /* --- Main Layout --- */
+        /* --- Main App --- */
         #main-app { display: none; padding: 20px; }
         header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 30px; }
-        .logo-text { font-size: 24px; font-weight: 800; }
-
         .song-list { display: grid; gap: 15px; padding-bottom: 180px; }
         .song-card { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border); padding: 12px; border-radius: 20px; display: flex; align-items: center; gap: 15px; cursor: pointer; position: relative; }
         .song-card img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; }
-        .delete-btn { position: absolute; right: 15px; color: #ff4d4d; font-size: 18px; display: none; padding: 10px; }
+        .delete-btn { position: absolute; right: 15px; color: #ff4d4d; font-size: 18px; display: none; padding: 10px; cursor: pointer; }
 
         /* --- Upload Overlay --- */
         #upload-overlay {
@@ -63,19 +73,23 @@
 </head>
 <body>
 
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <p id="loading-text" style="margin-top:15px; letter-spacing:1px; font-size:12px; opacity:0.8;">PLEASE WAIT...</p>
+    </div>
+
     <div id="auth-screen">
         <div class="glass-box">
-            <h2 style="margin-bottom:20px;">A ONE MUSIC</h2>
-            <input type="email" id="login-email" placeholder="Email">
+            <h2 style="letter-spacing:1px;">A ONE MUSIC</h2>
+            <input type="email" id="login-email" placeholder="Email Address">
             <input type="password" id="login-password" placeholder="Password">
-            <button class="btn" onclick="authProcess()">Login / Sign Up</button>
-            <p id="status-msg" style="margin-top:10px; font-size:12px; color:var(--accent);"></p>
+            <button class="btn" onclick="authProcess()">LOGIN / JOIN</button>
         </div>
     </div>
 
     <div id="main-app">
         <header>
-            <div class="logo-text">A ONE <span style="color:var(--accent)">MUSIC</span></div>
+            <div style="font-size:24px; font-weight:800;">A ONE <span style="color:var(--accent)">MUSIC</span></div>
             <div style="display:flex; gap:20px; align-items:center;">
                 <i class="fas fa-plus-circle" style="font-size: 28px; cursor: pointer;" onclick="toggleUpload(true)"></i>
                 <i class="fas fa-sign-out-alt" onclick="logout()" style="cursor:pointer; opacity:0.6;"></i>
@@ -85,7 +99,7 @@
         <div id="song-list" class="song-list"></div>
 
         <div class="player-bar">
-            <div id="p-title" style="text-align:center; font-size:14px; font-weight:bold; margin-bottom:5px;">A One Experience</div>
+            <div id="p-title" style="text-align:center; font-size:14px; font-weight:bold; margin-bottom:5px;">Digital Experience</div>
             <div style="display:flex; justify-content:center; align-items:center; gap:35px; margin:10px 0;">
                 <i class="fas fa-backward" style="opacity:0.4"></i>
                 <i class="fas fa-play-circle" id="master-play" style="font-size:45px; cursor:pointer;" onclick="controlPlay()"></i>
@@ -99,12 +113,21 @@
 
     <div id="upload-overlay">
         <div style="width:90%; max-width:400px; text-align:center;">
-            <h2 style="margin-bottom: 25px;">Publish Track</h2>
-            <input type="text" id="song-title" placeholder="Song Name" style="background:rgba(255,255,255,0.1);">
-            <div class="step-box" id="step-logo" onclick="pickMedia('image')"><i class="fas fa-image"></i><p id="logo-status">Cover Image</p></div>
-            <div class="step-box" id="step-file" onclick="pickMedia('video')"><i class="fas fa-music"></i><p id="file-status">Music File</p></div>
-            <button class="btn" onclick="publishSong()" style="margin-top:15px; background:#fff; color:#000;">PUBLISH</button>
-            <p onclick="toggleUpload(false)" style="margin-top:20px; cursor:pointer; opacity:0.6;">Close</p>
+            <h2 style="margin-bottom: 25px;">PUBLISH TRACK</h2>
+            <input type="text" id="song-title" placeholder="Track Title" style="background:rgba(255,255,255,0.1);">
+            
+            <div class="step-box" id="step-logo" onclick="pickMedia('image')">
+                <i class="fas fa-image"></i>
+                <p id="logo-status">SELECT COVER IMAGE</p>
+            </div>
+
+            <div class="step-box" id="step-file" onclick="pickMedia('video')">
+                <i class="fas fa-music"></i>
+                <p id="file-status">SELECT MUSIC FILE</p>
+            </div>
+
+            <button class="btn" onclick="publishSong()" style="margin-top:15px; background:#fff; color:#000;">PUBLISH NOW</button>
+            <p onclick="toggleUpload(false)" style="margin-top:20px; cursor:pointer; opacity:0.6;">CANCEL</p>
         </div>
     </div>
 
@@ -132,26 +155,22 @@
 
         let tempLogo = "", tempMusic = "", isAdmin = false;
 
-        // --- AUTH & PERSISTENCE ---
+        const setLoader = (show, text = "PLEASE WAIT...") => {
+            document.getElementById('loading-screen').style.display = show ? 'flex' : 'none';
+            document.getElementById('loading-text').innerText = text.toUpperCase();
+        };
+
         window.authProcess = () => {
-            const e = document.getElementById('login-email').value;
-            const p = document.getElementById('login-password').value;
+            const e = document.getElementById('login-email').value, p = document.getElementById('login-password').value;
             if(!e || !p) return;
-
+            setLoader(true, "Authenticating...");
             setPersistence(auth, browserLocalPersistence).then(() => {
-                return signInWithEmailAndPassword(auth, e, p).catch(() => {
-                    return createUserWithEmailAndPassword(auth, e, p);
-                });
-            }).catch(err => alert(err.message));
+                return signInWithEmailAndPassword(auth, e, p).catch(() => createUserWithEmailAndPassword(auth, e, p));
+            }).finally(() => setLoader(false));
         };
 
-        window.logout = () => {
-            if(confirm("Logout ചെയ്യണോ?")) {
-                signOut(auth).then(() => location.reload());
-            }
-        };
+        window.logout = () => signOut(auth).then(() => location.reload());
 
-        // Automatic Login Logic
         onAuthStateChanged(auth, user => {
             if(user) {
                 isAdmin = (user.email === ADMIN_EMAIL);
@@ -164,36 +183,63 @@
             }
         });
 
-        // --- UPLOAD LOGIC ---
         window.toggleUpload = (show) => document.getElementById('upload-overlay').style.display = show ? 'flex' : 'none';
 
+        // --- FIXED LOADING FOR SELECT BUTTONS ---
         window.pickMedia = (type) => {
-            cloudinary.openUploadWidget({ cloudName: 'dwnkxexws', uploadPreset: 'wr0mzvbi', resourceType: type }, (err, res) => {
-                if (!err && res.event === "success") {
-                    if(type === 'image') { tempLogo = res.info.secure_url; document.getElementById('step-logo').classList.add('done'); document.getElementById('logo-status').innerText = "Cover Selected"; }
-                    else { tempMusic = res.info.secure_url; document.getElementById('step-file').classList.add('done'); document.getElementById('file-status').innerText = "Music Selected"; }
+            setLoader(true, "Opening Cloud Storage..."); // വിഡ്ജറ്റ് ഓപ്പൺ ചെയ്യുന്നതിന് മുൻപുള്ള ലോഡിംഗ്
+            
+            cloudinary.openUploadWidget({ 
+                cloudName: 'dwnkxexws', 
+                uploadPreset: 'wr0mzvbi', 
+                resourceType: type 
+            }, (err, res) => {
+                if (err) { setLoader(false); return; }
+                
+                // വിഡ്ജറ്റ് വിൻഡോ വന്നുകഴിഞ്ഞാൽ ലോഡിംഗ് മാറ്റാം
+                if (res.event === "display-changed" && res.info === "shown") {
+                    setLoader(false);
+                }
+
+                if (res.event === "success") {
+                    setLoader(false);
+                    if(type === 'image') { 
+                        tempLogo = res.info.secure_url; 
+                        document.getElementById('step-logo').classList.add('done'); 
+                        document.getElementById('logo-status').innerText = "COVER LOADED ✅"; 
+                    } else { 
+                        tempMusic = res.info.secure_url; 
+                        document.getElementById('step-file').classList.add('done'); 
+                        document.getElementById('file-status').innerText = "MUSIC LOADED ✅"; 
+                    }
                 }
             });
+            
+            // വിഡ്ജറ്റ് ലോഡ് ആകാൻ കുറച്ച് സമയം എടുത്താൽ 3 സെക്കൻഡിന് ശേഷം ലോഡർ തനിയെ മാറും
+            setTimeout(() => setLoader(false), 3000);
         };
 
         window.publishSong = () => {
             const title = document.getElementById('song-title').value;
-            if(!title || !tempLogo || !tempMusic) return alert("Please finish all steps");
+            if(!title || !tempLogo || !tempMusic) return alert("Finish all steps!");
+            setLoader(true, "Publishing Track...");
             const id = push(ref(db, 'songs')).key;
             set(ref(db, 'songs/' + id), { id, title, cover: tempLogo, url: tempMusic }).then(() => {
                 toggleUpload(false);
                 location.reload();
-            });
+            }).finally(() => setLoader(false));
         };
 
         window.deleteTrack = (e, id) => {
             e.stopPropagation();
-            if(confirm("ഈ പാട്ട് ഡിലീറ്റ് ചെയ്യണോ?")) {
-                remove(ref(db, 'songs/' + id));
+            if(confirm("Confirm Delete?")) {
+                setLoader(true, "Deleting...");
+                remove(ref(db, 'songs/' + id)).then(() => {
+                    alert("Deleted!");
+                }).finally(() => setLoader(false));
             }
         };
 
-        // --- PLAYER LOGIC ---
         window.playMe = (url, title) => {
             audio.src = url; audio.play();
             document.getElementById('p-title').innerText = title;
@@ -202,8 +248,7 @@
 
         window.controlPlay = () => {
             if(!audio.src) return;
-            if(audio.paused) { audio.play(); document.getElementById('master-play').className = "fas fa-pause-circle"; }
-            else { audio.pause(); document.getElementById('master-play').className = "fas fa-play-circle"; }
+            audio.paused ? (audio.play(), document.getElementById('master-play').className = "fas fa-pause-circle") : (audio.pause(), document.getElementById('master-play').className = "fas fa-play-circle");
         };
 
         audio.ontimeupdate = () => document.getElementById('p-fill').style.width = (audio.currentTime / audio.duration) * 100 + "%";
@@ -220,7 +265,7 @@
                             <img src="${song.cover}">
                             <div style="flex:1">
                                 <h4 style="font-size:16px;">${song.title}</h4>
-                                <small style="opacity:0.4;">Official Audio</small>
+                                <small style="opacity:0.4;">Music Cloud</small>
                             </div>
                             ${isAdmin ? `<i class="fas fa-trash-alt delete-btn" style="display:block" onclick="deleteTrack(event, '${song.id}')"></i>` : ''}
                         </div>`;
